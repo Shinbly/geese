@@ -5,4 +5,6 @@ package u_bordeaux.etu.geese;
  */
 
 class Save {
+
+
 }

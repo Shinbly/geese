@@ -5,4 +5,5 @@ package u_bordeaux.etu.geese;
  */
 
 class LoadFromCamera extends Load {
+
 }
