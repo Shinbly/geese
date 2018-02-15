@@ -31,7 +31,7 @@ public interface Filters {
      *
      * @param
      */
-    void hue();
+    void hue(Bitmap bmp, int value);
 
     /**
      *
@@ -49,19 +49,19 @@ public interface Filters {
      *
      * @param
      */
-    void moyenneur();
+    void moyenneur(Bitmap bmp, int size);
 
     /**
      *
      * @param
      */
-    void gaussien();
+    void gaussien(Bitmap bmp, int size);
 
     /**
      *
      * @param
      */
-    void sobel();
+    void sobel(Bitmap bmp);
 
     /**
      *

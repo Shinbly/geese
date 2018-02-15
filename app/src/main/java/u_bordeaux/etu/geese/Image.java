@@ -87,7 +87,16 @@ public class Image extends BitmapFactory implements Filters {
     }
 
     @Override
-    public void hue() {
+    public void hue(Bitmap bmp, int value) { //value between 0 and 360
+        int[] pixels = new int[this.size];
+        bmp.getPixels(pixels, 0, width, 0,0, width, height);
+        float[] hsv = new float[3];
+        for (int i=0 ; i < (this.size) ; i++ ){
+            Color.colorToHSV(pixels[i], hsv);
+            hsv[0] = (hsv[0]+value)%360;
+            pixels[i] = Color.HSVToColor(hsv);
+        }
+        bmp.setPixels(pixels,0,this.width,0,0,this.width,this.height);
 
     }
 
@@ -123,18 +132,99 @@ public class Image extends BitmapFactory implements Filters {
         bmp.setPixels(pixels,0, width, 0,0, width, height);
     }
 
-    @Override
-    public void moyenneur() {
+    private void convolution(int [] pixels, double []filtre) {
+        int f_size = (int) Math.sqrt(filtre.length);
+        int side= f_size/2+1;
+        int newRed;
+        int newGreen;
+        int newBlue;
+        int position;
+        double coeff = 0;
+
+        for (int i= 0 ; i < filtre.length; i ++){
+            coeff += filtre[i];
+        }
+
+        int []tmppixels = pixels.clone();
+
+
+
+
+
+
+        for (int x = side; x < width-side ; x++ ) {
+            for (int y = side; y < height - side; y++) {
+                newRed = 0;
+                newBlue= 0;
+                newGreen= 0;
+                for (int i= 0 ; i < filtre.length; i ++){
+                    // la position est donc de x = ((x-taille/2)+(i%taille))     et y  = y -taille/2 + i/taille
+                    position = ((x-f_size/2)+(i%f_size))+(width*(y -f_size/2 + i/f_size));
+                    newRed += (Color.red(tmppixels[position]) * filtre[i]);
+                    newGreen += (Color.green(tmppixels[position]) * filtre[i]);
+                    newBlue += (Color.blue(tmppixels[position]) * filtre[i]);
+                }
+                pixels[x+width*y] = Color.rgb((int) (newRed/coeff),(int) (newGreen/coeff),(int) (newBlue/coeff));
+            }
+        }
+
+
 
     }
 
     @Override
-    public void gaussien() {
+    public void moyenneur(Bitmap bmp, int size_mask) {
+        double mask[]= new double[size_mask*size_mask];
+        for (int i = 0; i< size_mask*size_mask; i++){
+            mask[i]= 1;
+        }
+        int[] pixels = new int[size];
+        bmp.getPixels(pixels, 0, width, 0,0, width, height);
+        convolution(pixels,mask);
+        bmp.setPixels(pixels,0, width, 0,0, width, height);
 
     }
 
     @Override
-    public void sobel() {
+    public void gaussien(Bitmap bmp, int size_mask) {
+        double mask[]= new double[size_mask*size_mask];
+        for (int x = 0; x< size_mask;x++){
+            for(int y= 0; y < size_mask;y++){
+                mask[x+y*size_mask]= Math.exp(-(Math.pow(x,2))-(Math.pow(y,2)));
+            }
+        }
+        int[] pixels = new int[size];
+        bmp.getPixels(pixels, 0, width, 0,0, width, height);
+        convolution(pixels,mask);
+        bmp.setPixels(pixels,0, width, 0,0, width, height);
+
+
+    }
+
+    @Override
+    public void sobel(Bitmap bmp) {
+        int newRed;
+        int newGreen;
+        int newBlue;
+        double mask_v[]= {-1,0,1,-2,0,2,-1,0,1};
+        double mask_h[]= {-1,-2,-1,0,0,0,1,2,1};
+        int[] pixels = new int[size];
+        int[] vertical = new int[size];
+        int[] horizontal = new int[size];
+        bmp.getPixels(vertical, 0, width, 0,0, width, height);
+        horizontal = vertical.clone();
+        convolution(vertical,mask_v);
+        convolution(horizontal,mask_h);
+        for (int i = 0; i < size; i++){
+            newRed = (int) Math.sqrt(Math.pow(Color.red(vertical[i]),2)-Math.pow(Color.red(horizontal[i]),2));
+            newGreen = (int) Math.sqrt(Math.pow(Color.green(vertical[i]),2)-Math.pow(Color.green(horizontal[i]),2));
+            newBlue = (int) Math.sqrt(Math.pow(Color.blue(vertical[i]),2)-Math.pow(Color.blue(horizontal[i]),2));
+            pixels[i] = Color.rgb(newRed,newGreen,newBlue);
+        }
+        bmp.setPixels(pixels,0, width, 0,0, width, height);
+
+
+
 
     }
 

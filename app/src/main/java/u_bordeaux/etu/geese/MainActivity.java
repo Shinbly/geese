@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -35,7 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private static int RESULT_LOAD_IMG = 0;
     private static int RESULT_CAMERA = 1;
 
+    Image img;
+
     Matrix matrix = new Matrix();
+
     Float scale = 1f;
     ScaleGestureDetector SGD;
 
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     options.inScaled = false;
                     options.inMutable = true;
                     bmap = BitmapFactory.decodeStream(stream, null, options);
+                    img= new Image(bmap);
                     Iv.setImageBitmap(bmap);
                 } catch (FileNotFoundException e) {
                     Log.v("Image loading", "Unable to load Image : File not found");
@@ -98,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
         SGD = new ScaleGestureDetector(this, new ScaleListener());
 
-
         b_gallery.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
@@ -117,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
         b_sepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sepia(bmap);
+                img.toGray(bmap);
+                img.sobel(bmap);
+                img.gaussien(bmap,5);
             }
         });
 
