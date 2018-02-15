@@ -1,5 +1,7 @@
 package u_bordeaux.etu.geese;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by jfachan on 02/02/18.
  */
@@ -8,9 +10,10 @@ public interface Filters {
 
     /**
      *
-     * @param
+     * @param bmp
+     * @param value
      */
-    void brightness();
+    void brightness(Bitmap bmp, int value);
 
     /**
      *
@@ -34,13 +37,13 @@ public interface Filters {
      *
      * @param
      */
-    void toGray();
+    void toGray(Bitmap bmp);
 
     /**
      *
      * @param
      */
-    void sepia();
+    void sepia(Bitmap bmp);
 
     /**
      *
