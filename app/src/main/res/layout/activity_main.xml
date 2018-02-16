@@ -58,24 +58,27 @@
         android:id="@+id/imageView"
         android:layout_width="348dp"
         android:layout_height="422dp"
-        android:scaleType="matrix"
-        app:srcCompat="@android:drawable/gallery_thumb"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:scaleType="matrix"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView2"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteY="21dp"
-        tools:layout_editor_absoluteX="16dp" />
+        app:srcCompat="@android:drawable/gallery_thumb" />
 
     <u_bordeaux.etu.geese.Viewer
         android:id="@+id/viewer"
         android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="7dp"
+        android:layout_height="465dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp" />
 
 </android.support.constraint.ConstraintLayout>
