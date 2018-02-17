@@ -1,57 +1,77 @@
 package u_bordeaux.etu.geese;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+
 /**
  * Created by Lalie on 06/02/2018.
  */
 
-public class Image implements Filters {
-    @Override
-    public void brightness() {
+public class Image {
 
+    /**
+     *
+     */
+    private Bitmap bmp;
+
+    /**
+     *
+     */
+    final private int[] backup;
+
+
+    /**
+     *
+     */
+    public Image(Bitmap bmp) {
+        this.bmp = bmp;
+        this.backup = new int[bmp.getHeight()*bmp.getWidth()];
+        bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
-    @Override
-    public void contrast() {
-
+    public Bitmap getBmp() {
+        return bmp;
     }
 
-    @Override
-    public void histogram() {
-
+    public int getWidth(){
+        return bmp.getWidth();
     }
 
-    @Override
-    public void hue() {
-
+    public int getHeight(){
+        return bmp.getHeight();
     }
 
-    @Override
-    public void toGray() {
-
+    public int getNbPixels(){
+        return bmp.getHeight()*bmp.getWidth();
     }
 
-    @Override
-    public void sepia() {
-
+    public void restore() {
+        bmp.setPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
-    @Override
-    public void moyenneur() {
-
+    public void getPixels(int []pixels){
+        bmp.getPixels(pixels, 0, bmp.getWidth(), 0,0, bmp.getWidth(), bmp.getHeight());
     }
 
-    @Override
-    public void gaussien() {
-
+    public void setPixels(int []pixels){
+        bmp.setPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
-    @Override
-    public void sobel() {
-
+    public void getHsv(float[][]hsv){
+        int[] pixels = new int[this.getWidth()*this.getHeight()];
+        this.getPixels(pixels);
+        for (int i = 0; i < (this.getWidth()*this.getHeight()); i++) {
+            Color.colorToHSV(pixels[i], hsv[i]);
+        }
     }
 
-    @Override
-    public void laplacien() {
-
+    public void setHsv(float[][]hsv){
+        int[] pixels = new int[this.getWidth()*this.getHeight()];
+        for (int i = 0; i < (this.getWidth()*this.getHeight()); i++) {
+            pixels[i] = Color.HSVToColor(hsv[i]);
+        }
+        this.setPixels(pixels);
     }
+
 }
