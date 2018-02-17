@@ -49,9 +49,10 @@ public class Filters {
     public void toGray(Image img) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
+        int newColor;
 
         for (int i = 0; i < img.getNbPixels(); i++) {
-            int newColor = (int) (0.3 * Color.red(pixels[i]) + 0.59 * Color.green(pixels[i]) + 0.11 * Color.blue(pixels[i]));
+            newColor =(30 * Color.red(pixels[i]) + 59 * Color.green(pixels[i]) + 11 * Color.blue(pixels[i]))/100;
             pixels[i] = Color.rgb(newColor, newColor, newColor);
         }
 
