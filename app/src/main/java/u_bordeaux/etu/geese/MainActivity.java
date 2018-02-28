@@ -1,10 +1,17 @@
 package u_bordeaux.etu.geese;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -14,16 +21,26 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import static android.app.Activity.RESULT_OK;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageView Iv;
     private Viewer viewer;
+
+    private Uri imageUri;
+    private Animator currentAnimator;
+    private int longAnimationDuration;
 
     private Bitmap bmap;
 
@@ -37,24 +54,19 @@ public class MainActivity extends AppCompatActivity {
 
     Image img;
 
-    Matrix matrix = new Matrix();
-
-    Float scale = 1f;
-    ScaleGestureDetector SGD;
-
     protected void onActivityResult(int reqCode, int resultCode, Intent data){
         super.onActivityResult(reqCode,resultCode,data);
         if (resultCode == RESULT_OK) {
             if (reqCode == RESULT_LOAD_IMG) {
                 try {
-                    final Uri pathImg = data.getData();
-                    final InputStream stream = getContentResolver().openInputStream(pathImg);
+                    imageUri = data.getData();
+                    final InputStream stream = getContentResolver().openInputStream(imageUri);
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inScaled = true;
                     options.inMutable = true;
                     bmap = BitmapFactory.decodeStream(stream, null, options);
                     img = new Image(bmap);
-                    Iv.setImageBitmap(bmap);
+                    viewer.setImageBitmap(bmap);
 
                 } catch (FileNotFoundException e) {
                     Log.v("Image loading", "Unable to load Image : File not found");
@@ -63,27 +75,79 @@ public class MainActivity extends AppCompatActivity {
             if (reqCode == RESULT_CAMERA) {
                 bmap = (Bitmap) data.getExtras().get("data");
                 img= new Image(bmap);
-                Iv.setImageBitmap(bmap);
-
+                viewer.setImageBitmap(bmap);
             }
         }
     }
 
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            scale = scale * detector.getScaleFactor();
-            scale = Math.max(0.1f, Math.min(scale,5f));
-            matrix.setScale(scale,scale);
-            Iv.setImageMatrix(matrix);
-            return true;
-        }
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        SGD.onTouchEvent(event);
-        return true;
+    private void zoomImageFromThumb(){
+
+        if(currentAnimator != null){
+            currentAnimator.cancel();
+        }
+
+            Rect startBounds = new Rect();
+            Rect finalBounds = new Rect();
+            Point globalOffset = new Point();
+
+            viewer.getGlobalVisibleRect(startBounds);
+            findViewById(R.id.container).getGlobalVisibleRect(finalBounds,globalOffset);
+            startBounds.offset(-globalOffset.x, -globalOffset.y);
+            finalBounds.offset(-globalOffset.x, -globalOffset.y);
+
+            float startScale;
+            if((float) finalBounds.width()/finalBounds.height()>
+                    (float) startBounds.width()/startBounds.height()){
+
+                startScale = (float) startBounds.height() / finalBounds.height();
+
+                float startWidth = (float) startScale * finalBounds.width();
+                float deltaWidth = (startWidth - startBounds.width()) / 2;
+
+                startBounds.left -= deltaWidth;
+                startBounds.right += deltaWidth;
+            }else{
+                startScale = (float) startBounds.width() / finalBounds.width();
+
+                float startHeight = (float) startScale * finalBounds.height();
+                float deltaHeight = (startHeight - startBounds.height()) /2;
+
+                startBounds.top -= deltaHeight;
+                startBounds.bottom += deltaHeight;
+            }
+
+            Iv.setAlpha(0f);
+            viewer.setVisibility(View.VISIBLE);
+
+            viewer.setPivotX(0f);
+            viewer.setPivotY(0f);
+
+            AnimatorSet set = new AnimatorSet();
+            set
+                    .play(ObjectAnimator.ofFloat(viewer, View.X, startBounds.left, finalBounds.left))
+                    .with(ObjectAnimator.ofFloat(viewer, View.Y, startBounds.top, finalBounds.top))
+                    .with(ObjectAnimator.ofFloat(viewer, View.SCALE_X, startScale, 1f))
+                    .with(ObjectAnimator.ofFloat(viewer, View.SCALE_Y, startScale, 1f));
+            set.setDuration(longAnimationDuration);
+            set.setInterpolator(new DecelerateInterpolator());
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    super.onAnimationCancel(animation);
+
+                    currentAnimator = null;
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+
+                    currentAnimator = null;
+                }
+            });
+            set.start();
+            currentAnimator = set;
     }
 
 
@@ -100,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         b_sepia = (Button) findViewById(R.id.B_sepia);
 
-        SGD = new ScaleGestureDetector(this, new ScaleListener());
+        longAnimationDuration = getResources().getInteger(android.R.integer.config_longAnimTime);
 
         b_gallery.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -122,6 +186,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Convolution.sobel(img);
+            }
+        });
+
+        Iv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                zoomImageFromThumb();
+
+                return true;
             }
         });
 
