@@ -9,6 +9,7 @@ import android.graphics.Color;
 public class Histogram {
 
 
+
     private void histogram(Image img,int []histo) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
