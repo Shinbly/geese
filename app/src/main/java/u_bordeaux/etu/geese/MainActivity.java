@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         b_sepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Convolution.sobel(img);
+                Convolution.gaussien(img,5 );
             }
         });
 
