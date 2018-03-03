@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
         b_sepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Convolution.sobel(img);
+                Intent intent = new Intent(MainActivity.this, EditingActivity.class);
+                MainActivity.this.startActivity(intent);
             }
         });
 
