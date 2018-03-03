@@ -22,7 +22,6 @@ public class Convolution {
         for (int i= 0 ; i < filtre.length; i ++){
             coeff += filtre[i];
         }
-        System.out.println(coeff);
 
         int []tmppixels = pixels.clone();
 
@@ -64,19 +63,17 @@ public class Convolution {
     public static void gaussien(Image img, int size_mask) {
         double mask[]= new double[size_mask*size_mask];
         double coeff = 0;
-        int sigma= size_mask/4;
+        double sigma= 1+size_mask/4;
         int rayon = size_mask/2;
         for (int y = -rayon; y<= rayon;y++){
             for(int x= -rayon ; x <= rayon ;x++){
-                mask[(x+rayon)+(y+rayon)*size_mask]=(Math.exp(-((x*x+y*y)/(2*sigma*sigma)))) ;
+                mask[(x+rayon)+(y+rayon)*size_mask]=(Math.exp(-((x*x+y*y)/(2*(sigma*sigma))))) ;
             }
-            System.out.println( "["+mask[0+(y+rayon)*size_mask]+" "+mask[1+(y+rayon)*size_mask]+" "+mask[2+(y+rayon)*size_mask]+" "+mask[3+(y+rayon)*size_mask]+" "+mask[4+(y+rayon)*size_mask]+"]");
         }
         coeff = (Math.exp(-((rayon*rayon*2)/(2*sigma*sigma))));
         for (int i = 0 ; i < size_mask*size_mask;i++){
             mask[i]/= coeff;
         }
-        System.out.println(coeff);
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
         convolution(img,pixels,mask);
@@ -112,7 +109,16 @@ public class Convolution {
 
     }
 
-    public void laplacien() {
+    public static void laplacien(Image img) {
+
+        double mask_4cx[]= {0,1,0,1,-4,1,0,1,0};
+        double mask_8cx[]= {1,1,1,1,-8,1,1,1,1};
+
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        convolution(img,pixels,mask_4cx);
+        convolution(img,pixels,mask_8cx);
+        img.setPixels(pixels);
 
     }
 }

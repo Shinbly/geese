@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -121,7 +121,12 @@ public class MainActivity extends AppCompatActivity {
         b_sepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Convolution.gaussien(img,5 );
+                new Thread(new Runnable() {
+                    public void run() {
+                        Filters.brightness(img,25);
+                    }
+
+                    }).start();
             }
         });
 

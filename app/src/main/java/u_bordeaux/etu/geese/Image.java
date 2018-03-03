@@ -3,6 +3,7 @@ package u_bordeaux.etu.geese;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.widget.ImageView;
 
 /**
  * Created by Lalie on 06/02/2018.
@@ -72,6 +73,10 @@ public class Image {
             pixels[i] = Color.HSVToColor(hsv[i]);
         }
         this.setPixels(pixels);
+    }
+
+    public void setImageView(ImageView Iv){
+        Iv.setImageBitmap(bmp);
     }
 
 }
