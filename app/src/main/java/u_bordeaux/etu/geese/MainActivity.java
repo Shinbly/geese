@@ -1,5 +1,6 @@
 package u_bordeaux.etu.geese;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static int RESULT_LOAD_IMG = 0;
     private static int RESULT_CAMERA = 1;
+    private Context context;
 
     Image img;
 
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                     options.inScaled = true;
                     options.inMutable = true;
                     bmap = BitmapFactory.decodeStream(stream, null, options);
-                    img = new Image(bmap);
+                    img = new Image(bmap,context);
                     Iv.setImageBitmap(bmap);
 
                 } catch (FileNotFoundException e) {
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (reqCode == RESULT_CAMERA) {
                 bmap = (Bitmap) data.getExtras().get("data");
-                img= new Image(bmap);
+                img= new Image(bmap,context);
                 Iv.setImageBitmap(bmap);
 
             }
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
 
         Iv = (ImageView) findViewById(R.id.imageView);
         viewer = (Viewer) findViewById(R.id.viewer);
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         b_sepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Convolution.sobel(img);
+                Filters.hue(img,(int)Math.random()*360);
             }
         });
 

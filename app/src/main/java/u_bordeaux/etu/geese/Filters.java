@@ -37,7 +37,7 @@ public class Filters {
         img.setPixels(pixels);
     }
 
-    public void hue(Image img, int value) { //value between 0 and 360
+    public static void hue(Image img, int value) { //value between 0 and 360
         float[][] hsv = new float[img.getNbPixels()][3];
         img.getHsv(hsv);
         for (int i = 0; i < (img.getNbPixels()); i++) {
