@@ -9,7 +9,7 @@ import android.graphics.Color;
 
 public class Filters {
 
-    private int truncate(int value) {
+    private static int truncate(int value) {
         if (value < 0) {
             value = 0;
         } else if (value > 255) {
@@ -19,7 +19,7 @@ public class Filters {
         return value;
     }
 
-    public void brightness(Image img, int value) {
+    public static void brightness(Image img, int value) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
 
@@ -37,7 +37,7 @@ public class Filters {
         img.setPixels(pixels);
     }
 
-    public void hue(Image img, int value) { //value between 0 and 360
+    public static void hue(Image img, int value) { //value between 0 and 360
         float[][] hsv = new float[img.getNbPixels()][3];
         img.getHsv(hsv);
         for (int i = 0; i < (img.getNbPixels()); i++) {
@@ -46,7 +46,7 @@ public class Filters {
         img.setHsv(hsv);
     }
 
-    public void toGray(Image img) {
+    public static void toGray(Image img) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
         int newColor;
@@ -59,7 +59,7 @@ public class Filters {
         img.setPixels(pixels);
     }
 
-    public void sepia(Image img) {
+    public static void sepia(Image img) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
 
@@ -73,7 +73,6 @@ public class Filters {
             newBlue = truncate((int) (Color.red(pixels[i]) * .272) + (int) (Color.green(pixels[i]) * .534) + (int) (Color.blue(pixels[i]) * .131));
             pixels[i] = Color.rgb(newRed, newGreen, newBlue);
         }
-
         img.setPixels(pixels);
     }
 }

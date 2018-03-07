@@ -1,106 +1,103 @@
 package u_bordeaux.etu.geese;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.content.pm.PackageManager;
 
 public class MainActivity extends AppCompatActivity {
-
-    private ImageView Iv;
-    private Viewer viewer;
-
-    private Bitmap bmap;
 
     private ImageButton b_gallery;
     private ImageButton b_camera;
 
-    private Button b_sepia;
-
     private static int RESULT_LOAD_IMG = 0;
     private static int RESULT_CAMERA = 1;
 
-    Image img;
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
-    Matrix matrix = new Matrix();
+    private Uri uriCamera;
 
-    Float scale = 1f;
-    ScaleGestureDetector SGD;
+    String mCurrentPhotoPath;
+
+    Context context;
 
     protected void onActivityResult(int reqCode, int resultCode, Intent data){
         super.onActivityResult(reqCode,resultCode,data);
         if (resultCode == RESULT_OK) {
             if (reqCode == RESULT_LOAD_IMG) {
-                try {
                     final Uri pathImg = data.getData();
-                    final InputStream stream = getContentResolver().openInputStream(pathImg);
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inScaled = true;
-                    options.inMutable = true;
-                    bmap = BitmapFactory.decodeStream(stream, null, options);
-                    img = new Image(bmap);
-                    Iv.setImageBitmap(bmap);
 
-                } catch (FileNotFoundException e) {
-                    Log.v("Image loading", "Unable to load Image : File not found");
-                }
+                    Intent intent = new Intent(MainActivity.this, EditingActivity.class);
+                    intent.putExtra("pathBitmap",pathImg);
+                    startActivity(intent);
             }
             if (reqCode == RESULT_CAMERA) {
-                bmap = (Bitmap) data.getExtras().get("data");
-                img= new Image(bmap);
-                Iv.setImageBitmap(bmap);
+                    galleryAddPic();
 
+                    Intent intent = new Intent(MainActivity.this, EditingActivity.class);
+                    intent.putExtra("pathBitmap",uriCamera);
+                    startActivity(intent);
             }
         }
     }
 
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            scale = scale * detector.getScaleFactor();
-            scale = Math.max(0.1f, Math.min(scale,5f));
-            matrix.setScale(scale,scale);
-            Iv.setImageMatrix(matrix);
-            return true;
+    private void savePerm(){
+        if(Build.VERSION.SDK_INT >= 23) {
+            int hasWriteGalleryPermission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (hasWriteGalleryPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+            }
         }
     }
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        SGD.onTouchEvent(event);
-        return true;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_DCIM + "/geese");
+        File image = File.createTempFile(imageFileName,".jpg",storageDir);
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
+    private void galleryAddPic() {
+        Intent mediaScanItent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanItent.setData(contentUri);
+        this. sendBroadcast(mediaScanItent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Iv = (ImageView) findViewById(R.id.imageView);
-        viewer = (Viewer) findViewById(R.id.viewer);
-
         b_gallery = (ImageButton) findViewById(R.id.B_gallery);
         b_camera = (ImageButton) findViewById(R.id.B_camera);
 
-        b_sepia = (Button) findViewById(R.id.B_sepia);
 
-        SGD = new ScaleGestureDetector(this, new ScaleListener());
+        context = getApplicationContext();
+
+        savePerm();
 
         b_gallery.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -114,17 +111,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                startActivityForResult(intent, RESULT_CAMERA);
+                if(intent.resolveActivity(getPackageManager()) != null){
+                    File photoFile = null;
+
+                    try{
+                        photoFile = createImageFile();
+
+                    }catch (IOException e){
+
+                    }
+
+                    if(photoFile != null){
+                        uriCamera = FileProvider.getUriForFile(context,"u_bordeaux.etu.geese.fileprovider", photoFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCamera);
+                        startActivityForResult(intent, RESULT_CAMERA);
+                    }
+                }
             }
         });
-
-        b_sepia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditingActivity.class);
-                MainActivity.this.startActivity(intent);
-            }
-        });
-
     }
 }

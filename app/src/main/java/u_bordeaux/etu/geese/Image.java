@@ -30,8 +30,20 @@ public class Image {
         bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
+    public void setBmp(){
+
+    }
+
     public Bitmap getBmp() {
         return bmp;
+    }
+
+    public Bitmap getPreview(int width, int height) {
+        float ratio = (float)(getWidth())/(float)getHeight();
+        if(ratio<1)
+            return Bitmap.createScaledBitmap(bmp,(int)(height*ratio),height,true);
+        else
+            return Bitmap.createScaledBitmap(bmp,width,(int)(width/ratio),true);
     }
 
     public int getWidth(){
