@@ -293,6 +293,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     break;
                 case MotionEvent.ACTION_DOWN : {
                     firstPointerID = pointerId;
+
                     DownPT.x = (int) event.getX();
                     DownPT.y = (int) event.getY();
                     break;
