@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
@@ -150,104 +151,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         }
         SGD = new ScaleGestureDetector(this, new ScaleListener());
 
-
-
-
-
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            float downX, downY;
-            int totalX, totalY;
-            int scrollByX, scrollByY;
-            int maxX = (int)(((img.getWidth()*scale) / 2) - (imageView.getWidth() / 2));
-            int maxY = (int)(((img.getHeight()*scale) / 2) - (imageView.getHeight() / 2));
-            // set scroll limits
-            int maxLeft = (maxX * -1);
-            int maxRight = maxX;
-            int maxTop = (maxY * -1);
-            int maxBottom = maxY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                SGD.onTouchEvent(event);
-                float currentX, currentY;
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        downX = event.getX();
-                        downY = event.getY();
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        currentX = event.getX();
-                        currentY = event.getY();
-                        scrollByX = (int) (downX - currentX);
-                        scrollByY = (int) (downY - currentY);
-
-                        // scrolling to left side of image (pic moving to the right)
-                        if (currentX > downX) {
-                            if (totalX == maxLeft) {
-                                scrollByX = 0;
-                            }
-                            if (totalX > maxLeft) {
-                                totalX = totalX + scrollByX;
-                            }
-                            if (totalX < maxLeft) {
-                                scrollByX = maxLeft - (totalX - scrollByX);
-                                totalX = maxLeft;
-                            }
-                        }
-
-                        // scrolling to right side of image (pic moving to the left)
-                        if (currentX < downX) {
-                            if (totalX == maxRight) {
-                                scrollByX = 0;
-                            }
-                            if (totalX < maxRight) {
-                                totalX = totalX + scrollByX;
-                            }
-                            if (totalX > maxRight) {
-                                scrollByX = maxRight - (totalX - scrollByX);
-                                totalX = maxRight;
-                            }
-                        }
-
-                        // scrolling to top of image (pic moving to the bottom)
-                        if (currentY > downY) {
-                            if (totalY == maxTop) {
-                                scrollByY = 0;
-                            }
-                            if (totalY > maxTop) {
-                                totalY = totalY + scrollByY;
-                            }
-                            if (totalY < maxTop) {
-                                scrollByY = maxTop - (totalY - scrollByY);
-                                totalY = maxTop;
-                            }
-                        }
-
-                        // scrolling to bottom of image (pic moving to the top)
-                        if (currentY < downY) {
-                            if (totalY == maxBottom) {
-                                scrollByY = 0;
-                            }
-                            if (totalY < maxBottom) {
-                                totalY = totalY + scrollByY;
-                            }
-                            if (totalY > maxBottom) {
-                                scrollByY = maxBottom - (totalY - scrollByY);
-                                totalY = maxBottom;
-                            }
-                        }
-                        imageView.scrollBy(scrollByX, scrollByY);
-                        downX = currentX;
-                        downY = currentY;
-                        break;
-                }
-                return true;
-            }
-        });
-
-
     }
 
     @Override
@@ -363,20 +266,51 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         imageView.setImageBitmap(img.getBmp());
         imageView.invalidate();
     }
-/*
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        int firstPointerID = 0;
+        PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
+
+        // get pointer index from the event object
+        int pointerIndex = event.getActionIndex();
+        // get pointer ID
+        int pointerId = event.getPointerId(pointerIndex);
+
         SGD.onTouchEvent(event);
+        if (!SGD.isInProgress()) {
+            int eid = event.getAction();
+            switch (eid)
+            {
+                case MotionEvent.ACTION_MOVE :
+                    if(pointerId == firstPointerID) {
+
+                        PointF mv = new PointF( (int)(event.getX() - DownPT.x)-imageView.getX()/2, (int)( event.getY() - DownPT.y)-imageView.getY()/2);
+                        imageView.setTranslationX(mv.x*2);
+                        imageView.setTranslationY(mv.y*2);
+
+                    }
+                    break;
+                case MotionEvent.ACTION_DOWN : {
+                    firstPointerID = pointerId;
+                    DownPT.x = (int) event.getX();
+                    DownPT.y = (int) event.getY();
+                    break;
+                }
+                default :
+                    break;
+            }
+        }
         return true;
-    }*/
+    }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            scale = scale * detector.getScaleFactor();
-            scale = Math.max(((float)imageView.getHeight()/(float)img.getHeight())/1.3f, Math.min(scale,5f));
-            matrix.setScale(scale,scale);
-            imageView.setImageMatrix(matrix);
+            scale = imageView.getScaleX() * detector.getScaleFactor();
+            imageView.setScaleX(scale);
+            imageView.setScaleY(scale);
+            imageView.invalidate();
             return true;
         }
     }
