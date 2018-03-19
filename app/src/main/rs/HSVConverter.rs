@@ -3,48 +3,52 @@
 
 
 unsigned int RS_KERNEL rgbToHsv(unsigned int in, uint32_t x, uint32_t y) {
+  int R = ((in >> 16) & 0xff);
+  int G = ((in >>  8) & 0xff);
+  int B = ((in      ) & 0xff);
+  int Cmax= max(R,max(G,B));
+  int Cmin= min(R,min(G,B));
+  float delta = Cmax-Cmin;
+  float hue;
+  float sat;
+  float val;
 
-   int Red = (in >> 16) & 0xff;
-   int Green = (in >>  8) & 0xff;
-   int Blue = (in      ) & 0xff;
-   float R = Red/255;
-   float G = Green/255;
-   float B = Blue/255;
-   float Cmax= max(R,max(G,B));
-   float Cmin= min(R,min(G,B));
-   float delta = Cmax-Cmin;
-   float hue;
-   float sat;
-   float val;
-
-   if (delta == 0){
-        hue = 0;
-   }
-   else{
-       if (R == Cmax){
-            hue = 60 * (fmod((float)((G-B)/delta),6.f));
-       }
-       else {
-            if(G == Cmax){
-                hue = 60 * (((B-R)/delta)+2 );
-            }
-            else {
-                hue = 60 * (((R-G)/delta))+4;
-            }
-       }
-   }
-   if (Cmax == 0){
-        sat = 0;
-   }
-   else{
-        sat = 100* delta / Cmax;
-   }
-   val = Cmax*100;
-   unsigned int out = (int)hue*1000000+ (int)sat * 1000 + (int)val;
-
+  if (delta == 0){
+    hue = 0;
+  }
+  else{
+    if (R == Cmax){
+      hue = G-B;
+      hue = (float)hue/(float)delta;
+      hue = fmod(hue,6.0f);
+    }
+    else{
+      if(G == Cmax){
+        hue = B-R;
+        hue = (float)hue/(float)delta;
+        hue+= 2.0f;
+      }
+      else{
+        if (B == Cmax) {
+            hue = R-G;
+            hue = (float)hue/(float)delta;
+            hue+= 4.0f;
+        }
+      }
+    }
+    hue*=60.f;
+  }
+  if (Cmax == 0){
+    sat = 0;
+  }
+  else{
+    sat = (float)(100.f*(float)delta/(float)Cmax);
+  }
+  val = (float)((float)Cmax*100.f/255.f);
+  hue= (int)(hue*5);
+  val = (int)(val*5);
+  sat = (int)(sat*5);
+  unsigned int out = hue*1000000+ sat * 1000 + val;
    // out = ((int)hue & 0x1FF) << 16 | ((int)sat & 0x7F) << 8 | ((int)val & 0x7F);
-
-
-
   return out;
 }

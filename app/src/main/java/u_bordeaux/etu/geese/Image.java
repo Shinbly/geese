@@ -66,6 +66,7 @@ public class Image {
 
     public void getHsv(float[][]hsv){
         getHsvRs(hsv);
+        setHsv(hsv);
         /*
         int[] pixels = new int[this.getWidth()*this.getHeight()];
         this.getPixels(pixels);
@@ -100,10 +101,11 @@ public class Image {
         hsvToRvb.forEach_rgbToHsv(dataIn,dataOut);
         dataOut.copy2DRangeTo(0,0,width,height,pixels);
         for (int i= 0 ; i < nbPixels; i++){
-            System.out.println(pixels[i]);
-            hsv[i][0] =pixels[i]/1000000;//(float) ((pixels[i] >> 16) & 0x1FF);
-            hsv[i][1] =pixels[i]/1000;// (float)((pixels[i] >>  8) & 0x7F);
-            hsv[i][2] =pixels[i];//(float)((pixels[i]      ) & 0x7F);
+            hsv[i][2] =(float)((pixels[i]%1000)/5);
+            pixels[i]/=1000;
+            hsv[i][1] =(float)(pixels[i]%1000)/5;
+            pixels[i]/=1000;
+            hsv[i][0] =(float)(pixels[i]/5);
         }
     }
 

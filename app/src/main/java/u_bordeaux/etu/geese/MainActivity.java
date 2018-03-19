@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         b_sepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Filters.hue(img,(int)Math.random()*360);
+                Filters.hueRs(img,60,context);
             }
         });
 

@@ -1,7 +1,13 @@
 package u_bordeaux.etu.geese;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.v8.renderscript.Allocation;
+import android.support.v8.renderscript.Element;
+import android.support.v8.renderscript.RenderScript;
+import android.support.v8.renderscript.Type;
+import android.util.Log;
 
 /**
  * Created by jfachan on 16/02/18.
@@ -37,7 +43,7 @@ public class Filters {
         img.setPixels(pixels);
     }
 
-    public static void hue(Image img, int value) { //value between 0 and 360
+    public static void hue(Image img, int value) { //value between -180 and 180
         float[][] hsv = new float[img.getNbPixels()][3];
         img.getHsv(hsv);
         for (int i = 0; i < (img.getNbPixels()); i++) {
@@ -45,6 +51,35 @@ public class Filters {
         }
         img.setHsv(hsv);
     }
+
+    public static void hueRs(Image img, int value,Context mainContext) { //value between -180 and 180
+
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        RenderScript script = RenderScript.create(mainContext);
+        Type.Builder typeBuilder = new Type.Builder(script, Element.U32(script));
+        typeBuilder.setX(width);
+        typeBuilder.setY(height);
+        Allocation dataIn = Allocation.createTyped(script,typeBuilder.create());
+        Allocation dataOut = Allocation.createTyped(script,typeBuilder.create());
+
+        ScriptC_Hue hue = new ScriptC_Hue(script);
+        hue.set_hueValue((float)value);
+
+        dataIn.copy2DRangeFrom(0,0,width,height,pixels);
+
+        hue.forEach_Hue(dataIn,dataOut);
+
+        dataOut.copy2DRangeTo(0,0,width,height,pixels);
+
+
+
+        img.setPixels(pixels);
+    }
+
 
     public void toGray(Image img) {
         int[] pixels = new int[img.getNbPixels()];
