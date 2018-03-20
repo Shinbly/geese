@@ -57,7 +57,7 @@ hue=  hue * 60.f;
   val = Cmax;
 
   //process
-  hue = fmod((hue + (float)hueValue),360.0f);
+  hue = fabs(fmod((hue + (float)hueValue),360.0f));
 
 
   // HSV to RGB

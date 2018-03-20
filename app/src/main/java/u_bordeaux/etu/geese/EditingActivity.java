@@ -2,6 +2,7 @@ package u_bordeaux.etu.geese;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -58,6 +59,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     FragmentFilters fragmentFilters;
     FragmentEdit fragmentEdit;
+
+    Context context;
 
 
     private String save(Bitmap bmp, String img_name){
@@ -131,6 +134,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
+        context = getApplicationContext();
+
 
 
 
@@ -195,7 +200,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 Filters.sepia(img);
                 break;
             case "hue":
-                Filters.hue(img,(int)(Math.random()*360));
+                Filters.hueRs(img,(int)(Math.random()*360),context);
                 break;
             case "egalization" :
                 Histogram.equalization(img);
@@ -224,7 +229,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 Convolution.gaussien(preview,progress);
                 break;
             case "hue":
-                Filters.hue(preview,progress);
+                Filters.hueRs(preview,progress,context);
                 break;
             default:
                 Log.i("error ", "onFilterSelected: wrong tag");
@@ -257,7 +262,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 Convolution.gaussien(img,progress);
                 break;
             case "hue":
-                Filters.hue(img,progress);
+                Filters.hueRs(img,progress,context);
                 break;
             default:
                 Log.i("error ", "onFilterSelected: wrong tag");
