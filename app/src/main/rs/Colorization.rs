@@ -1,7 +1,7 @@
 #pragma version(1)
 #pragma rs java_package_name(u_bordeaux.etu.geese)
 
-float hueValue = 0.0f;
+float colorizationValue = 0.0f;
 
 
 unsigned int RS_KERNEL Hue(unsigned int in, uint32_t x, uint32_t y) {
@@ -57,7 +57,7 @@ hue=  hue * 60.f;
   val = Cmax;
 
   //process
-  hue = fmod((hue + (float)hueValue),360.0f);
+  hue = colorizationValue;
 
 
   // HSV to RGB

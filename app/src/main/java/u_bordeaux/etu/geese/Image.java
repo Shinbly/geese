@@ -65,14 +65,11 @@ public class Image {
     }
 
     public void getHsv(float[][]hsv){
-        getHsvRs(hsv);
-        setHsv(hsv);
-        /*
         int[] pixels = new int[this.getWidth()*this.getHeight()];
         this.getPixels(pixels);
         for (int i = 0; i < (this.getWidth()*this.getHeight()); i++) {
             Color.colorToHSV(pixels[i], hsv[i]);
-        }*/
+        }
     }
 
     public void setHsv(float[][]hsv){
@@ -83,30 +80,5 @@ public class Image {
         this.setPixels(pixels);
     }
 
-    public void getHsvRs(float[][]hsv){
-        int width = this.getWidth();
-        int height = this.getHeight();
-        int nbPixels= this.getNbPixels();
-        int[] pixels = new int[this.getWidth()*this.getHeight()];
-        this.getPixels(pixels);
-
-        RenderScript script = RenderScript.create(mainContext);
-        Type.Builder typeBuilder = new Type.Builder(script, Element.U32(script));
-        typeBuilder.setX(width);
-        typeBuilder.setY(height);
-        Allocation dataIn = Allocation.createTyped(script,typeBuilder.create());
-        Allocation dataOut = Allocation.createTyped(script,typeBuilder.create());
-        ScriptC_HSVConverter hsvToRvb = new ScriptC_HSVConverter(script);
-        dataIn.copy2DRangeFrom(0,0,width,height,pixels);
-        hsvToRvb.forEach_rgbToHsv(dataIn,dataOut);
-        dataOut.copy2DRangeTo(0,0,width,height,pixels);
-        for (int i= 0 ; i < nbPixels; i++){
-            hsv[i][2] =(float)((pixels[i]%1000)/5);
-            pixels[i]/=1000;
-            hsv[i][1] =(float)(pixels[i]%1000)/5;
-            pixels[i]/=1000;
-            hsv[i][0] =(float)(pixels[i]/5);
-        }
-    }
 
 }
