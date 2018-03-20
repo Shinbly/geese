@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.v7.widget.Toolbar;
+import android.widget.ShareActionProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,6 +44,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     Image img;
     Image preview;
 
+    private Uri pathImg;
+
 
     Matrix matrix = new Matrix();
     Float scale = 1f;
@@ -49,7 +53,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     private ImageButton brightness;
     private ImageButton contrast;
-    private Button hue;
+    private ImageButton hue;
     private Button gray;
     private Button sepia;
 
@@ -131,10 +135,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
         Intent intent = getIntent();
-        Uri pathImg = (Uri) intent.getParcelableExtra("pathBitmap");
+        pathImg = (Uri) intent.getParcelableExtra("pathBitmap");
         try{
             final InputStream stream = getContentResolver().openInputStream(pathImg);
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -253,15 +255,29 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void share(Uri uri){
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setType("image/jpeg");
+
+        startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.save_image:
+            case R.id.action_save:
                 this.save(img.getBmp(),"img"+cptImage);
                 cptImage++;
+                return true;
+
+            case R.id.action_share:
+                share(this.pathImg);
                 return true;
 
             case R.id.restore_image:

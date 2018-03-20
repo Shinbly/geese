@@ -5,6 +5,19 @@
     tools:context="com.example.lolipoptest.MainActivity">
 
     <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_save"
+        android:title="Save img"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_share"
+        android:title="Share image"
+        app:showAsAction="ifRoom"
+        android:actionProviderClass="android.widget.ShareActionProvider"/>
+
+    <item
         android:id="@+id/save_image"
         android:orderInCategory="100"
         app:showAsAction="never"
