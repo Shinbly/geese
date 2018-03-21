@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Geese</string>
-
+    <string name="action_settings">Action Settings</string>
+    <string name="send_to">Share with</string>
 </resources>

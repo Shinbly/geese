@@ -38,7 +38,6 @@ public class Filters {
     }
 
     public static void hue(Image img, int value) { //value between 0 and 360
-
         float[][] hsv = new float[img.getNbPixels()][3];
         img.getHsv(hsv);
         for (int i = 0; i < (img.getNbPixels()); i++) {
@@ -74,7 +73,6 @@ public class Filters {
             newBlue = truncate((int) (Color.red(pixels[i]) * .272) + (int) (Color.green(pixels[i]) * .534) + (int) (Color.blue(pixels[i]) * .131));
             pixels[i] = Color.rgb(newRed, newGreen, newBlue);
         }
-
         img.setPixels(pixels);
     }
 }
