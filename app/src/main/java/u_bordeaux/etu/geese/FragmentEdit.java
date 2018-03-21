@@ -3,12 +3,14 @@ package u_bordeaux.etu.geese;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import butterknife.BindView;
@@ -27,11 +29,20 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     @BindView(R.id.contrast)
     ImageButton contrast;
     @BindView(R.id.blurring)
-    Button blur;
+    ImageButton blur;
     @BindView(R.id.hue)
     Button hue;
     @BindView(R.id.seekBarEdit)
     SeekBar seekBarControl;
+    @BindView(R.id.cancel)
+    Button cancel;
+    @BindView(R.id.validate)
+    Button validate;
+
+    @BindView(R.id.seekBarLayout)
+    LinearLayout seekBarLayout;
+    @BindView(R.id.filtersLayout)
+    LinearLayout filtersLayout;
 
     String Tag ="";
     int progress;
@@ -54,6 +65,8 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         blur.setOnClickListener(this);
         hue.setOnClickListener(this);
 
+        cancel.setOnClickListener(this);
+        validate.setOnClickListener(this);
 
         return view;
     }
@@ -61,6 +74,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     @Override
     public void onClick(View v) {
         Log.i("listener", "on click :  "+this.listener);
+
         if (this.listener != null) {
             if (v.getId() == R.id.brightness) {
                 seekBarControl.setMax(200);
@@ -82,10 +96,20 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
                 seekBarControl.setProgress(180);
                 Tag = "hue";
             }
-            seekBarControl.setVisibility(View.VISIBLE);
-            seekBarControl.setOnSeekBarChangeListener(this);
-        }
+            if (v.getId() == R.id.validate) {
+                listener.onFilterSelected(Tag,progress);
+            }
+            if (v.getId() == R.id.cancel || v.getId() == R.id.validate) {
+                seekBarLayout.setVisibility(View.INVISIBLE);
+                filtersLayout.setVisibility(View.VISIBLE);
+            }else{
+                seekBarLayout.setVisibility(View.VISIBLE);
+                filtersLayout.setVisibility(View.INVISIBLE);
+            }
 
+            seekBarControl.setOnSeekBarChangeListener(this);
+
+        }
     }
 
     @Override
@@ -121,14 +145,6 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        if (this.listener != null) {
-            seekBar.setVisibility(View.INVISIBLE);
-            listener.onFilterSelected(Tag,progress);
-        }
-
-        else
-            Log.i("listener", "onStopTrackingTouch: listener null");
-
 
     }
 

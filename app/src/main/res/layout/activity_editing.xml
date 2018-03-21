@@ -10,7 +10,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:minHeight="?attr/actionBarSize"
-        android:background="#2196F3"
+        android:background="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="4dp"
@@ -20,10 +20,10 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="450dp"
         android:gravity="center"
         android:elevation="0dp"
-        android:background="@color/colorBackgroundView"
+        android:background="@color/colorWhite"
         android:id="@+id/appbarid">
 
         <ImageView
@@ -43,7 +43,6 @@
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/viewpagerid">
-    </android.support.v4.view.ViewPager>
+        android:id="@+id/viewpagerid"/>
 
 </LinearLayout>
