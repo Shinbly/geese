@@ -99,9 +99,14 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
             if (v.getId() == R.id.validate) {
                 listener.onFilterSelected(Tag,progress);
             }
+            if (v.getId() == R.id.cancel) {
+                listener.onFilterSelected("cancel",progress);
+            }
             if (v.getId() == R.id.cancel || v.getId() == R.id.validate) {
+
                 seekBarLayout.setVisibility(View.INVISIBLE);
                 filtersLayout.setVisibility(View.VISIBLE);
+
             }else{
                 seekBarLayout.setVisibility(View.VISIBLE);
                 filtersLayout.setVisibility(View.INVISIBLE);

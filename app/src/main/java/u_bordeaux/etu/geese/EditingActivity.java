@@ -223,6 +223,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 break;
             case "linearExtention" :
                 Histogram.linearExtension(img);
+            case "cancel":
+                break;
 
             default:
                 Log.i("error ", "onFilterSelected: wrong tag");
@@ -280,8 +282,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
             case "hue":
                 Filters.hueRs(img,progress,context);
                 break;
-            default:
-                Log.i("error ", "onFilterSelected: wrong tag");
+            case "cancel":
                 break;
         }
         imageView.setImageBitmap(img.getBmp());
