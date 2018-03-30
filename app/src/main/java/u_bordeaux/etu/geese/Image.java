@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.widget.ImageView;
 
+
 /**
  * Class Image, represents the image on which all the modifications will be apply
  */
