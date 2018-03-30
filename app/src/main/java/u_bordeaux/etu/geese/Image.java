@@ -31,10 +31,6 @@ public class Image {
         bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
-    public void setBmp(){
-
-    }
-
     public Bitmap getBmp() {
         return bmp;
     }
@@ -62,6 +58,12 @@ public class Image {
     public void restore() {
         bmp.setPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
+    public Bitmap original(){
+        Bitmap original = bmp.copy(bmp.getConfig(),true);
+        original.setPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
+        return original;
+    }
+
 
     public void getPixels(int []pixels){
         bmp.getPixels(pixels, 0, bmp.getWidth(), 0,0, bmp.getWidth(), bmp.getHeight());

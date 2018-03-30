@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -23,9 +24,11 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.v7.widget.Toolbar;
+import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
 import java.io.File;
@@ -39,6 +42,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
+    private boolean working;
+
 
     private ImageView imageView;
 
@@ -199,126 +204,65 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     @Override
     public void onFilterSelected(String TAG) {
-        switch(TAG){
-            case "brightness":
-                Filters.brightness(img,50);
-                break;
-            case "contrast":
-                Histogram.equalization(img);
-                break;
-            case "blur":
-                Convolution.moyenneur(img,5);
-                break;
-            case "gray":
-                Filters.toGray(img);
-                break;
-            case "sepia":
-                Filters.sepia(img);
-                break;
-            case "hue":
-                Filters.hueRs(img,(int)(Math.random()*360),context);
-                break;
-            case "egalization" :
-                Histogram.equalization(img);
-                break;
-            case "linearExtention" :
-                Histogram.linearExtension(img);
-            case "cancel":
-                break;
-
-            default:
-                Log.i("error ", "onFilterSelected: wrong tag");
-                break;
-        }
-        imageView.invalidate();
+        filterSelection(TAG,-1,img);
     }
 
     @Override
     public void onPreviewSelected(String TAG, int progress) {
-        preview.restore();
-        switch(TAG){
-            case "brightness":
-                Filters.brightness(preview,progress);
-                break;
-            case "contrast":
-                //Histogram.equalization(preview,progress);
-                break;
-            case "blur":
-                Convolution.gaussien(preview,progress);
-                break;
-            case "hue":
-                Filters.hueRs(preview,progress,context);
-                break;
-            default:
-                Log.i("error ", "onFilterSelected: wrong tag");
-                break;
-        }
-        imageView.invalidate();
-        Log.i(TAG, "onPreviewSelected: "+progress);
+        filterSelection(TAG, progress, preview);
     }
 
     @Override
     public void onPreviewStart() {
         preview = new Image(img.getPreview(imageView.getWidth(),imageView.getHeight()));
         imageView.setImageBitmap(preview.getBmp());
-        imageView.invalidate();
-        Log.i("creation", "onPreviewStart: preview created");
-
     }
 
     @Override
     public void onFilterSelected(String TAG, int progress) {
-
-        switch(TAG){
-            case "brightness":
-                Filters.brightness(img,progress);
-                break;
-            case "contrast":
-                //Histogram.equalization(img,progress);
-                break;
-            case "blur":
-                Convolution.gaussien(img,progress);
-                break;
-            case "hue":
-                Filters.hueRs(img,progress,context);
-                break;
-            case "cancel":
-                break;
-        }
         imageView.setImageBitmap(img.getBmp());
-        imageView.invalidate();
+        filterSelection(TAG,progress,img);
+    }
+
+    public void filterSelection(String TAG, int progress, Image img){
+        if (working == false){
+            taskFilters exec = new taskFilters(TAG, progress, img);
+            exec.execute();
+            working = true;
+        }
+
+
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int firstPointerID = 0;
-        PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
-
-        // get pointer index from the event object
-        int pointerIndex = event.getActionIndex();
-        // get pointer ID
-        int pointerId = event.getPointerId(pointerIndex);
-
+        // Record Mouse Position When Pressed Down
         SGD.onTouchEvent(event);
         if (!SGD.isInProgress()) {
+            boolean touch = false;
+            PointF DownPT = new PointF();
+            PointF mv = new PointF();
             int eid = event.getAction();
             switch (eid)
             {
                 case MotionEvent.ACTION_MOVE :
-                    if(pointerId == firstPointerID) {
-
-                        PointF mv = new PointF( (int)(event.getX() - DownPT.x)-imageView.getX()/2, (int)( event.getY() - DownPT.y)-imageView.getY()/2);
-                        imageView.setTranslationX(mv.x*2);
-                        imageView.setTranslationY(mv.y*2);
-
+                    if(touch) {
+                        mv.x = (int)(event.getX() - DownPT.x)-imageView.getX()/2;
+                        mv.y = (int)(event.getY() - DownPT.y)-imageView.getY()/2;
+                        imageView.setTranslationX(mv.x);
+                        imageView.setTranslationY(mv.y);
                     }
                     break;
                 case MotionEvent.ACTION_DOWN : {
-                    firstPointerID = pointerId;
-
-                    DownPT.x = (int) event.getX();
-                    DownPT.y = (int) event.getY();
+                    if (!touch) {
+                        touch = true;
+                        DownPT.x = event.getX();
+                        DownPT.y = event.getY();
+                    }
                     break;
+                }
+                case MotionEvent.ACTION_UP:{
+                    touch = false;
                 }
                 default :
                     break;
@@ -335,6 +279,62 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
             imageView.setScaleY(scale);
             imageView.invalidate();
             return true;
+        }
+    }
+
+    private class taskFilters extends AsyncTask{
+        private String TAG;
+        private int progress;
+        private Image img;
+
+        public taskFilters (String TAG, int progress, Image img){
+            this.TAG = TAG;
+            this.progress = progress;
+            this.img = img;
+        }
+        @Override
+        protected Object doInBackground(Object... objects) {
+            if (img == preview){
+                preview.restore();
+            }
+            switch(TAG){
+                case "brightness":
+                    Filters.brightness(img,progress);
+                    break;
+                case "saturation":
+                    Filters.saturationRs(img,progress,context);
+                    break;
+                case "contrast":
+                    Filters.contrast(img,progress);
+                    break;
+                case "blur":
+                    Convolution.gaussien(img,progress);
+                    break;
+                case "hue":
+                    Filters.hueRs(img,progress,context);
+                    break;
+                case "gray":
+                    Filters.toGray(img);
+                    break;
+                case "sepia":
+                    Filters.sepia(img);
+                    break;
+                case "egalization" :
+                    Histogram.equalization(img);
+                    break;
+                case "linearExtention" :
+                    Histogram.linearExtension(img);
+                case "cancel":
+                    break;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+
+            imageView.setImageBitmap(img.getBmp());
+            working = false;
         }
     }
 }

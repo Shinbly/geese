@@ -108,4 +108,49 @@ public class Filters {
 
         img.setPixels(pixels);
     }
+
+    public static void contrast(Image img, int value){//value between -255 and 255
+        float coeff= (float)(259*(value+255)) / (float)((255 * (259-value)));
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        int newRed;
+        int newGreen;
+        int newBlue;
+        for (int i = 0; i < img.getNbPixels(); i++) {
+            newRed = (int)(coeff*(Color.red(pixels[i])-128) +128);
+            newGreen = (int)(coeff*(Color.green(pixels[i])-128) +128);
+            newBlue = (int)(coeff*(Color.blue(pixels[i])-128) +128);
+            pixels[i] = Color.rgb(truncate(newRed), truncate(newGreen), truncate(newBlue));
+        }
+        img.setPixels(pixels);
+
+
+    }
+
+    public static void saturationRs(Image img, int value, Context context) {
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        RenderScript script = RenderScript.create(context);
+        Type.Builder typeBuilder = new Type.Builder(script, Element.U32(script));
+        typeBuilder.setX(width);
+        typeBuilder.setY(height);
+        Allocation dataIn = Allocation.createTyped(script,typeBuilder.create());
+        Allocation dataOut = Allocation.createTyped(script,typeBuilder.create());
+
+        ScriptC_Saturation sat = new ScriptC_Saturation(script);
+        sat.set_saturationValue((float)value);
+
+        dataIn.copy2DRangeFrom(0,0,width,height,pixels);
+
+        sat.forEach_Saturation(dataIn,dataOut);
+
+        dataOut.copy2DRangeTo(0,0,width,height,pixels);
+
+
+
+        img.setPixels(pixels);
+    }
 }

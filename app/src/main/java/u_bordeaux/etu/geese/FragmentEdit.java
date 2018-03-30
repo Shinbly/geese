@@ -32,6 +32,8 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     ImageButton blur;
     @BindView(R.id.hue)
     Button hue;
+    @BindView(R.id.saturation)
+    Button saturation;
     @BindView(R.id.seekBarEdit)
     SeekBar seekBarControl;
     @BindView(R.id.cancel)
@@ -64,6 +66,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         contrast.setOnClickListener(this);
         blur.setOnClickListener(this);
         hue.setOnClickListener(this);
+        saturation.setOnClickListener(this);
 
         cancel.setOnClickListener(this);
         validate.setOnClickListener(this);
@@ -81,9 +84,14 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
                 seekBarControl.setProgress(100);
                 Tag = "brightness";
             }
-            if (v.getId() == R.id.contrast) {
+            if (v.getId() == R.id.saturation) {
                 seekBarControl.setMax(200);
                 seekBarControl.setProgress(100);
+                Tag = "saturation";
+            }
+            if (v.getId() == R.id.contrast) {
+                seekBarControl.setMax(500);
+                seekBarControl.setProgress(255);
                 Tag = "contrast";
             }
             if (v.getId() == R.id.blurring) {
@@ -123,6 +131,12 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
             switch (Tag) {
                 case "brightness":
                     this.progress = progress - 100;
+                    break;
+                case "saturation":
+                    this.progress = progress - 100;
+                    break;
+                case "contrast":
+                    this.progress = progress - 255;
                     break;
                 case "blur":
                     this.progress = progress*2+1;
