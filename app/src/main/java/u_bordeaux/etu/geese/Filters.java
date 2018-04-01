@@ -91,6 +91,24 @@ public class Filters {
         img.setPixels(pixels);
     }
 
+    public static void negatif(Image img) {
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        int newRed;
+        int newBlue;
+        int newGreen;
+        int maxColor = 255;
+
+        for (int i = 0; i < img.getNbPixels(); i++) {
+            newRed = maxColor-Color.red(pixels[i]);
+            newGreen = maxColor-Color.green(pixels[i]);
+            newBlue = maxColor-Color.blue(pixels[i]);
+            pixels[i] = Color.rgb(newRed, newGreen, newBlue);
+        }
+
+        img.setPixels(pixels);
+    }
+
     public static void sepia(Image img) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);

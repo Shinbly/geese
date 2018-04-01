@@ -121,6 +121,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
             }
 
             seekBarControl.setOnSeekBarChangeListener(this);
+            listener.onPreviewStart();
 
         }
     }
@@ -155,11 +156,6 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        if (this.listener != null) {
-            listener.onPreviewStart();
-        }
-        else
-            Log.i("listener", "onStartTrackingTouch: listener null");
     }
 
     @Override

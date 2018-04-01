@@ -58,7 +58,7 @@ hue=  hue * 60.f;
   //process
   sat = (sat*100)+saturationValue;
   sat = fmax(sat,0);
-  sat = fmin(sat, 100);
+  sat = fmin(sat, 99);
   sat = sat/100;
 
 

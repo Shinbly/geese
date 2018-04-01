@@ -54,15 +54,9 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     private Uri pathImg;
 
 
-    Matrix matrix = new Matrix();
     Float scale = 1f;
     ScaleGestureDetector SGD;
 
-    private ImageButton brightness;
-    private ImageButton contrast;
-    private ImageButton hue;
-    private Button gray;
-    private Button sepia;
 
     private int cptImage =0;
 
@@ -215,13 +209,12 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     @Override
     public void onPreviewStart() {
         preview = new Image(img.getPreview(imageView.getWidth(),imageView.getHeight()));
-        imageView.setImageBitmap(preview.getBmp());
     }
 
     @Override
     public void onFilterSelected(String TAG, int progress) {
-        imageView.setImageBitmap(img.getBmp());
         filterSelection(TAG,progress,img);
+
     }
 
     public void filterSelection(String TAG, int progress, Image img){
@@ -308,7 +301,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     Filters.contrast(img,progress);
                     break;
                 case "blur":
-                    Convolution.gaussien(img,progress);
+                    Convolution.gaussien(img,progress,context);
                     break;
                 case "hue":
                     Filters.hueRs(img,progress,context);
@@ -324,6 +317,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     break;
                 case "linearExtention" :
                     Histogram.linearExtension(img);
+                case "negatif" :
+                    Filters.negatif(img);
                 case "cancel":
                     break;
             }
@@ -332,7 +327,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
         @Override
         protected void onPostExecute(Object o) {
-
             imageView.setImageBitmap(img.getBmp());
             working = false;
         }

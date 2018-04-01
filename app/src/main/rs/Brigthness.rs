@@ -59,7 +59,7 @@ hue=  hue * 60.f;
   //process
   val = (val*100)+brigthnessValue;
   val = fmax(val,0);
-  val = fmin(val, 100);
+  val = fmin(val, 99);
   val = val/100;
 
 
