@@ -1,6 +1,11 @@
 package u_bordeaux.etu.geese;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v8.renderscript.Allocation;
+import android.support.v8.renderscript.Element;
+import android.support.v8.renderscript.RenderScript;
+import android.support.v8.renderscript.Type;
 
 /**
  * Created by jfachan on 16/02/18.
@@ -46,21 +51,49 @@ public class Convolution {
 
 
     }
+    private static void convolutionRS(Image img, int [] pixels, double []mask,Context context){
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        RenderScript script = RenderScript.create(context);
+        Type.Builder typeBuilder = new Type.Builder(script, Element.U32(script));
+        typeBuilder.setX(width);
+        typeBuilder.setY(height);
+        Allocation dataIn = Allocation.createTyped(script,typeBuilder.create());
+        Allocation dataOut = Allocation.createTyped(script,typeBuilder.create());
+        Allocation filter = Allocation.createSized(script,Element.F64(script),mask.length);
+
+        ScriptC_Convolution convo = new ScriptC_Convolution(script);
+        filter.copy1DRangeFrom(0,mask.length,mask);
+        convo.set_picture(dataIn);
+        convo.bind_filter(filter);
+        convo.set_fSize((int)(Math.sqrt(mask.length)));
+        convo.set_imgWidth(img.getWidth());
+        convo.set_imgHeight(img.getHeight());
+
+        dataIn.copy2DRangeFrom(0,0,width,height,pixels);
+
+        convo.forEach_convolution(dataIn,dataOut);
+
+        dataOut.copy2DRangeTo(0,0,width,height,pixels);
 
 
-    public static void moyenneur(Image img, int size_mask) {
+    }
+
+
+    public static void moyenneur(Image img, int size_mask,Context context) {
         double mask[]= new double[size_mask*size_mask];
         for (int i = 0; i< size_mask*size_mask; i++){
             mask[i]= 1;
         }
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
-        convolution(img,pixels,mask);
+        convolutionRS(img,pixels,mask,context);
         img.setPixels(pixels);
 
     }
 
-    public static void gaussien(Image img, int size_mask) {
+    public static void gaussien(Image img, int size_mask,Context context) {
         double mask[]= new double[size_mask*size_mask];
         double coeff = 0;
         double sigma= 1+size_mask/4;
@@ -76,14 +109,17 @@ public class Convolution {
         }
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
-        convolution(img,pixels,mask);
+        if (context != null) {
+            convolutionRS(img,pixels,mask,context);
+        }
+        else {
+            convolution(img, pixels, mask);
+        }
         img.setPixels(pixels);
-
-
     }
 
 
-    public static void sobel(Image img) {
+    public static void sobel(Image img,Context context) {
         int newRed;
         int newGreen;
         int newBlue;
@@ -94,8 +130,8 @@ public class Convolution {
         int[] horizontal;
         img.getPixels(vertical);
         horizontal = vertical.clone();
-        convolution(img,vertical,mask_v);
-        convolution(img,horizontal,mask_h);
+        convolutionRS(img,vertical,mask_v,context);
+        convolutionRS(img,horizontal,mask_h,context);
         for (int i = 0; i < img.getNbPixels(); i++){
             newRed = (int) Math.sqrt(Math.pow(Color.red(vertical[i]),2)+Math.pow(Color.red(horizontal[i]),2));
             newGreen = (int) Math.sqrt(Math.pow(Color.green(vertical[i]),2)+Math.pow(Color.green(horizontal[i]),2));
@@ -109,15 +145,15 @@ public class Convolution {
 
     }
 
-    public static void laplacien(Image img) {
+    public static void laplacien(Image img,Context context) {
 
         double mask_4cx[]= {0,1,0,1,-4,1,0,1,0};
         double mask_8cx[]= {1,1,1,1,-8,1,1,1,1};
 
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
-        convolution(img,pixels,mask_4cx);
-        convolution(img,pixels,mask_8cx);
+        convolutionRS(img,pixels,mask_4cx,context);
+        convolutionRS(img,pixels,mask_8cx,context);
         img.setPixels(pixels);
 
     }

@@ -28,6 +28,8 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
     Button egalization;
     @BindView(R.id.linearExtention)
     Button linearExtention;
+    @BindView(R.id.negatif)
+    Button negatif;
 
 
     public void setListener(FragmentFiltersListener listener) {
@@ -44,6 +46,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         sepia.setOnClickListener(this);
         linearExtention.setOnClickListener(this);
         egalization.setOnClickListener(this);
+        negatif.setOnClickListener(this);
 
         return view;
 
@@ -51,8 +54,6 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
     @Override
     public void onClick(View v) {
-
-        Log.i("listener", "on click :  "+this.listener);
         if (this.listener != null) {
             if (v.getId() == R.id.gray) {
                 listener.onFilterSelected("gray");
@@ -65,6 +66,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             }
             if (v.getId() == R.id.linearExtention) {
                 listener.onFilterSelected("linearExtention");
+            }
+            if (v.getId() == R.id.negatif) {
+                listener.onFilterSelected("negatif");
             }
         }
 
