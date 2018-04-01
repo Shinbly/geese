@@ -2,11 +2,7 @@ package u_bordeaux.etu.geese;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v8.renderscript.Allocation;
-import android.support.v8.renderscript.Element;
-import android.support.v8.renderscript.RenderScript;
-import android.support.v8.renderscript.Type;
-
+import android.support.v8.renderscript.*;
 /**
  * Created by jfachan on 16/02/18.
  */
