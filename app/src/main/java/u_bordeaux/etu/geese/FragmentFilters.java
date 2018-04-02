@@ -30,6 +30,11 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
     Button linearExtention;
     @BindView(R.id.negatif)
     Button negatif;
+    @BindView(R.id.sobel)
+    Button sobel;
+    @BindView(R.id.laplacien)
+    Button laplacien;
+    String tag;
 
 
     public void setListener(FragmentFiltersListener listener) {
@@ -47,6 +52,8 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         linearExtention.setOnClickListener(this);
         egalization.setOnClickListener(this);
         negatif.setOnClickListener(this);
+        sobel.setOnClickListener(this);
+        laplacien.setOnClickListener(this);
 
         return view;
 
@@ -55,23 +62,32 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
     @Override
     public void onClick(View v) {
         if (this.listener != null) {
-            if (v.getId() == R.id.gray) {
-                listener.onFilterSelected("gray");
-            }
-            if (v.getId() == R.id.sepia) {
-                listener.onFilterSelected("sepia");
-            }
-            if (v.getId() == R.id.egalization) {
-                listener.onFilterSelected("egalization");
-            }
-            if (v.getId() == R.id.linearExtention) {
-                listener.onFilterSelected("linearExtention");
-            }
-            if (v.getId() == R.id.negatif) {
-                listener.onFilterSelected("negatif");
-            }
-        }
+            switch (v.getId()){
+                case R.id.gray :
+                    tag ="gray";
+                    break;
+                case  R.id.sepia:
+                    tag = "sepia";
+                    break;
+                case  R.id.egalization:
+                    tag = "egalization";
+                    break;
+                case  R.id.linearExtention :
+                    tag = "linearExtention";
+                break;
+                case R.id.negatif :
+                    tag ="negatif";
+                break;
+                case R.id.sobel :
+                    tag = "sobel";
+                    break;
+                case  R.id.laplacien :
+                    tag = "laplacien";
+                    break;
 
+            }
+            listener.onFilterSelected(tag);
+        }
     }
 
 

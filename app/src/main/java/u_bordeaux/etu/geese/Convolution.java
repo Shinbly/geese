@@ -3,6 +3,8 @@ package u_bordeaux.etu.geese;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v8.renderscript.*;
+import android.util.Log;
+
 /**
  * Created by jfachan on 16/02/18.
  */
@@ -137,6 +139,34 @@ public class Convolution {
         img.setPixels(pixels);
 
 
+
+
+    }
+    public static void sobelRS(Image img,Context context){
+
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        RenderScript script = RenderScript.create(context);
+        Type.Builder typeBuilder = new Type.Builder(script, Element.U32(script));
+        typeBuilder.setX(width);
+        typeBuilder.setY(height);
+        Allocation dataIn = Allocation.createTyped(script,typeBuilder.create());
+        Allocation dataOut = Allocation.createTyped(script,typeBuilder.create());
+
+        ScriptC_Sobel sobel = new ScriptC_Sobel(script);
+        sobel.set_picture(dataIn);
+        sobel.set_imgWidth(img.getWidth());
+        sobel.set_imgHeight(img.getHeight());
+
+        dataIn.copy2DRangeFrom(0,0,width,height,pixels);
+        Log.i("sobel", "sobelRS: ");
+
+        sobel.forEach_sobel(dataIn,dataOut);
+
+        dataOut.copy2DRangeTo(0,0,width,height,pixels);
 
 
     }

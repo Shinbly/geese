@@ -219,9 +219,13 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     public void filterSelection(String TAG, int progress, Image img){
         if (working == false){
+            working = true;
+
+            if (img == preview){
+                preview.restore();
+            }
             taskFilters exec = new taskFilters(TAG, progress, img);
             exec.execute();
-            working = true;
         }
 
 
@@ -287,9 +291,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         }
         @Override
         protected Object doInBackground(Object... objects) {
-            if (img == preview){
-                preview.restore();
-            }
             switch(TAG){
                 case "brightness":
                     Filters.brightness(img,progress);
@@ -319,6 +320,12 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     Histogram.linearExtension(img);
                 case "negatif" :
                     Filters.negatif(img);
+                case "sobel" :
+                    Convolution.moyenneur(img,7,context);
+                    Convolution.sobelRS(img,context);
+                    Filters.negatif(img);
+                case "Laplacien" :
+                    Convolution.laplacien(img,context);
                 case "cancel":
                     break;
             }
