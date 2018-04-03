@@ -198,6 +198,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     @Override
     public void onFilterSelected(String TAG) {
+        Log.i(TAG, "onFilterSelected: ");
         filterSelection(TAG,-1,img);
     }
 
@@ -233,38 +234,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Record Mouse Position When Pressed Down
         SGD.onTouchEvent(event);
-        if (!SGD.isInProgress()) {
-            boolean touch = false;
-            PointF DownPT = new PointF();
-            PointF mv = new PointF();
-            int eid = event.getAction();
-            switch (eid)
-            {
-                case MotionEvent.ACTION_MOVE :
-                    if(touch) {
-                        mv.x = (int)(event.getX() - DownPT.x)-imageView.getX()/2;
-                        mv.y = (int)(event.getY() - DownPT.y)-imageView.getY()/2;
-                        imageView.setTranslationX(mv.x);
-                        imageView.setTranslationY(mv.y);
-                    }
-                    break;
-                case MotionEvent.ACTION_DOWN : {
-                    if (!touch) {
-                        touch = true;
-                        DownPT.x = event.getX();
-                        DownPT.y = event.getY();
-                    }
-                    break;
-                }
-                case MotionEvent.ACTION_UP:{
-                    touch = false;
-                }
-                default :
-                    break;
-            }
-        }
         return true;
     }
 
@@ -318,24 +288,32 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     break;
                 case "linearExtention" :
                     Histogram.linearExtension(img);
+                    break;
                 case "negatif" :
                     Filters.negatif(img);
+                    break;
                 case "sobel" :
-                    Convolution.moyenneur(img,7,context);
-                    Convolution.sobelRS(img,context);
-                    Filters.negatif(img);
+
+                    Convolution.sobelRS(img,progress,context);
+                    Convolution.moyenneur(img,progress/50,context);
+                    //Filters.negatif(img);
+                    break;
                 case "Laplacien" :
                     Convolution.laplacien(img,context);
+                    break;
                 case "cancel":
                     break;
             }
+            Log.i(TAG, "in doInBackground: ");
             return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             imageView.setImageBitmap(img.getBmp());
+            imageView.invalidate();
             working = false;
+            Log.i(TAG, "done onPostExecute: ");
         }
     }
 }

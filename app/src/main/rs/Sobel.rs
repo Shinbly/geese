@@ -8,6 +8,7 @@ double mask_h[]= {-1,-2,-1,0,0,0,1,2,1};
 int fSize = 3;
 int imgWidth;
 int imgHeight;
+int progress;
 
 
 unsigned int RS_KERNEL sobel(unsigned int in, uint32_t x, uint32_t y) {
@@ -23,31 +24,25 @@ unsigned int RS_KERNEL sobel(unsigned int in, uint32_t x, uint32_t y) {
 
     for (int i = -side; i <= side; i++) {
         for (int j = -side; j <= side; j++) {
-            if (x >= side && (x+side)<=imgWidth && y >= side && (y +side) <= imgHeight){
-                coeff = mask_v[((j+side)*fSize)+i+side];
-                out = rsGetElementAt_uint(picture, x+i, y+j);
-                R += ((out >> 16) & 0xff)*coeff;
-                G += ((out >>  8) & 0xff)*coeff;
-                B += ((out      ) & 0xff)*coeff;
+            if (x >= side && (x + side)<=imgWidth && y >= side && (y + side) <= imgHeight){
 
-                coeff = mask_h[((j+side)*fSize)+i+side];
-                out = rsGetElementAt_uint(picture, x+i, y+j);
-                R2 += ((out >> 16) & 0xff)*coeff;
-                G2 += ((out >>  8) & 0xff)*coeff;
-                B2 += ((out      ) & 0xff)*coeff;
+                coeff = mask_v[((j + side) * fSize) + i + side];
+                out = rsGetElementAt_uint(picture, x + i, y + j);
+                R += ((out >> 16) & 0xff) * coeff;
 
-                /*R = sqrt((R*R)+(R2*R2));
-                G = sqrt((G*G)+(G2*G2));
-                B = sqrt((B*B)+(B2*B2));
-                R = fmax(R,0);
-                R = fmin(R,255);
-                G = fmax(G,0);
-                G = fmin(G,255);
-                B = fmax(B,0);
-                B = fmin(B,255);*/
+                coeff = mask_h[((j + side) * fSize) + i + side];
+                R2 += ((out >> 16) & 0xff) * coeff;
+
+
+
+                //R = fmax(fabs(R), fabs(R2));
+
+
+                R = sqrt((R * R) + (R2 * R2));
+
             }
         }
     }
-    out = ((int)R & 0xff) << 16 | ((int)G & 0xff) << 8 | ((int)B & 0xff);
+    out = ((int)R & 0xff) << 16 | ((int)R & 0xff) << 8 | ((int)R & 0xff);
     return out;
 }

@@ -40,11 +40,12 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     Button cancel;
     @BindView(R.id.validate)
     Button validate;
-
     @BindView(R.id.seekBarLayout)
     LinearLayout seekBarLayout;
     @BindView(R.id.filtersLayout)
     LinearLayout filtersLayout;
+    @BindView(R.id.sobel)
+    Button sobel;
 
     String Tag ="";
     int progress;
@@ -67,7 +68,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         blur.setOnClickListener(this);
         hue.setOnClickListener(this);
         saturation.setOnClickListener(this);
-
+        sobel.setOnClickListener(this);
         cancel.setOnClickListener(this);
         validate.setOnClickListener(this);
 
@@ -79,30 +80,38 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         Log.i("listener", "on click :  "+this.listener);
 
         if (this.listener != null) {
-            if (v.getId() == R.id.brightness) {
-                seekBarControl.setMax(200);
-                seekBarControl.setProgress(100);
-                Tag = "brightness";
-            }
-            if (v.getId() == R.id.saturation) {
-                seekBarControl.setMax(200);
-                seekBarControl.setProgress(100);
-                Tag = "saturation";
-            }
-            if (v.getId() == R.id.contrast) {
-                seekBarControl.setMax(500);
-                seekBarControl.setProgress(255);
-                Tag = "contrast";
-            }
-            if (v.getId() == R.id.blurring) {
-                seekBarControl.setMax(3);
-                seekBarControl.setProgress(0);
-                Tag = "blur";
-            }
-            if (v.getId() == R.id.hue) {
-                seekBarControl.setMax(360);
-                seekBarControl.setProgress(180);
-                Tag = "hue";
+
+            switch (v.getId()){
+                case R.id.brightness :
+                    seekBarControl.setMax(200);
+                    seekBarControl.setProgress(100);
+                    Tag = "brightness";
+                    break;
+                case R.id.saturation :
+                    seekBarControl.setMax(200);
+                    seekBarControl.setProgress(100);
+                    Tag = "saturation";
+                    break;
+                case R.id.contrast :
+                    seekBarControl.setMax(500);
+                    seekBarControl.setProgress(255);
+                    Tag = "contrast";
+                    break;
+                case R.id.blurring :
+                    seekBarControl.setMax(3);
+                    seekBarControl.setProgress(0);
+                    Tag = "blur";
+                    break;
+                case R.id.sobel :
+                    seekBarControl.setMax(510);
+                    seekBarControl.setProgress(255);
+                    Tag = "sobel";
+                    break;
+                case R.id.hue :
+                    seekBarControl.setMax(360);
+                    seekBarControl.setProgress(180);
+                    Tag = "hue";
+                    break;
             }
             if (v.getId() == R.id.validate) {
                 listener.onFilterSelected(Tag,progress);

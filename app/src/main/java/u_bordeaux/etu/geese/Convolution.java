@@ -142,8 +142,9 @@ public class Convolution {
 
 
     }
-    public static void sobelRS(Image img,Context context){
+    public static void sobelRS(Image img,int progress,Context context){
 
+        Filters.toGray(img);
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
         int width = img.getWidth();
@@ -160,13 +161,14 @@ public class Convolution {
         sobel.set_picture(dataIn);
         sobel.set_imgWidth(img.getWidth());
         sobel.set_imgHeight(img.getHeight());
+        sobel.set_progress(progress);
 
         dataIn.copy2DRangeFrom(0,0,width,height,pixels);
-        Log.i("sobel", "sobelRS: ");
-
         sobel.forEach_sobel(dataIn,dataOut);
 
         dataOut.copy2DRangeTo(0,0,width,height,pixels);
+
+        img.setPixels(pixels);
 
 
     }

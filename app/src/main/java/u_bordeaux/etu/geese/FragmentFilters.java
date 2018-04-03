@@ -18,23 +18,28 @@ import butterknife.ButterKnife;
 
 public class FragmentFilters extends Fragment implements Button.OnClickListener {
     View view;
+    String tag;
     private FragmentFiltersListener listener;
 
     @BindView(R.id.gray)
     Button gray;
+
     @BindView(R.id.sepia)
     Button sepia;
+
     @BindView(R.id.egalization)
     Button egalization;
+
     @BindView(R.id.linearExtention)
     Button linearExtention;
+
     @BindView(R.id.negatif)
     Button negatif;
-    @BindView(R.id.sobel)
-    Button sobel;
+
     @BindView(R.id.laplacien)
     Button laplacien;
-    String tag;
+
+
 
 
     public void setListener(FragmentFiltersListener listener) {
@@ -52,7 +57,6 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         linearExtention.setOnClickListener(this);
         egalization.setOnClickListener(this);
         negatif.setOnClickListener(this);
-        sobel.setOnClickListener(this);
         laplacien.setOnClickListener(this);
 
         return view;
@@ -74,18 +78,15 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
                     break;
                 case  R.id.linearExtention :
                     tag = "linearExtention";
-                break;
+                    break;
                 case R.id.negatif :
                     tag ="negatif";
-                break;
-                case R.id.sobel :
-                    tag = "sobel";
                     break;
                 case  R.id.laplacien :
                     tag = "laplacien";
                     break;
-
             }
+            Log.i(tag, "in onClick: ");
             listener.onFilterSelected(tag);
         }
     }

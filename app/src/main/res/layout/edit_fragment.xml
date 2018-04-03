@@ -6,9 +6,6 @@
     android:layout_centerVertical="true"
     android:background="@color/colorWhite">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -32,68 +29,88 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/cancel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cancel"/>
-
-                    <Button
                         android:id="@+id/validate"
                         android:layout_width="122dp"
                         android:layout_height="wrap_content"
-                        android:text="Validate"/>
+                        android:text="Validate" />
+
+                    <Button
+                        android:id="@+id/cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
+
             <LinearLayout
-                android:id="@+id/filtersLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/brightness"
+                    android:id="@+id/filtersLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorWhite"
-                    android:src="@drawable/ic_brightness"
-                    android:layout_marginRight="10dp"/>
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/saturation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="saturation" />
+                    <HorizontalScrollView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
 
-                <ImageButton
-                    android:id="@+id/contrast"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorWhite"
-                    android:src="@drawable/ic_contrast"
-                    android:layout_marginRight="10dp"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/blurring"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorWhite"
-                    android:src="@drawable/ic_blur"
-                    android:layout_marginRight="10dp"/>
+                            <ImageButton
+                                android:id="@+id/brightness"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:background="@color/colorWhite"
+                                android:src="@drawable/ic_brightness" />
 
-                <Button
-                    android:id="@+id/hue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hue" />
+                            <ImageButton
+                                android:id="@+id/contrast"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:background="@color/colorWhite"
+                                android:src="@drawable/ic_contrast" />
 
-            </LinearLayout>
+                            <ImageButton
+                                android:id="@+id/blurring"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:background="@color/colorWhite"
+                                android:src="@drawable/ic_blur" />
+
+                            <Button
+                                android:id="@+id/saturation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="saturation" />
+
+                            <Button
+                                android:id="@+id/sobel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="sobel" />
+
+                            <Button
+                                android:id="@+id/hue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hue" />
+
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+                </LinearLayout>
         </RelativeLayout>
-    </ScrollView>
 
 </LinearLayout>
