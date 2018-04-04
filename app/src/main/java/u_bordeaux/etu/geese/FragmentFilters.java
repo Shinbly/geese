@@ -36,6 +36,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
     @BindView(R.id.negatif)
     Button negatif;
 
+    @BindView(R.id.sobel)
+    Button sobel;
+
     @BindView(R.id.laplacien)
     Button laplacien;
 
@@ -58,6 +61,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         egalization.setOnClickListener(this);
         negatif.setOnClickListener(this);
         laplacien.setOnClickListener(this);
+        sobel.setOnClickListener(this);
 
         return view;
 
@@ -84,6 +88,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
                     break;
                 case  R.id.laplacien :
                     tag = "laplacien";
+                    break;
+                case  R.id.sobel :
+                    tag = "sobel";
                     break;
             }
             Log.i(tag, "in onClick: ");

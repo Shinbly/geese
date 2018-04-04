@@ -144,6 +144,7 @@ public class Histogram {
 
         for (int i = 0; i < 256; i++) {
             Lut[i] = (255*(i-min))/(max-min);
+            Lut[i] = Math.max(0,(Math.min(255,Lut[i])));
         }
 
         applyLut(img, Lut);

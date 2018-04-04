@@ -142,7 +142,7 @@ public class Convolution {
 
 
     }
-    public static void sobelRS(Image img,int progress,Context context){
+    public static void sobelRS(Image img, Context context){
 
         Filters.toGray(img);
         int[] pixels = new int[img.getNbPixels()];
@@ -161,7 +161,6 @@ public class Convolution {
         sobel.set_picture(dataIn);
         sobel.set_imgWidth(img.getWidth());
         sobel.set_imgHeight(img.getHeight());
-        sobel.set_progress(progress);
 
         dataIn.copy2DRangeFrom(0,0,width,height,pixels);
         sobel.forEach_sobel(dataIn,dataOut);
@@ -176,12 +175,12 @@ public class Convolution {
     public static void laplacien(Image img,Context context) {
 
         double mask_4cx[]= {0,1,0,1,-4,1,0,1,0};
-        double mask_8cx[]= {1,1,1,1,-8,1,1,1,1};
+        //double mask_8cx[]= {1,1,1,1,-8,1,1,1,1};
 
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
         convolutionRS(img,pixels,mask_4cx,context);
-        convolutionRS(img,pixels,mask_8cx,context);
+        //convolutionRS(img,pixels,mask_8cx,context);
         img.setPixels(pixels);
 
     }

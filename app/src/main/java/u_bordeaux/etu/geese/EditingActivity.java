@@ -293,10 +293,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     Filters.negatif(img);
                     break;
                 case "sobel" :
-
-                    Convolution.sobelRS(img,progress,context);
-                    Convolution.moyenneur(img,progress/50,context);
-                    //Filters.negatif(img);
+                    Convolution.sobelRS(img,context);
                     break;
                 case "Laplacien" :
                     Convolution.laplacien(img,context);

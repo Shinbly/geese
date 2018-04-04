@@ -8,7 +8,6 @@ double mask_h[]= {-1,-2,-1,0,0,0,1,2,1};
 int fSize = 3;
 int imgWidth;
 int imgHeight;
-int progress;
 
 
 unsigned int RS_KERNEL sobel(unsigned int in, uint32_t x, uint32_t y) {

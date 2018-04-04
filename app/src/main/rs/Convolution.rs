@@ -29,6 +29,7 @@ unsigned int RS_KERNEL convolution(unsigned int in, uint32_t x, uint32_t y) {
             }
         }
     }
+    if (div == 0){div += 1;}
     out = ((int)(R/div) & 0xff) << 16 | ((int)(G/div) & 0xff) << 8 | ((int)(B/div) & 0xff);
     return out;
 }

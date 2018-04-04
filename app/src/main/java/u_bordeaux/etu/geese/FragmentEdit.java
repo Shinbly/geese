@@ -23,6 +23,9 @@ import butterknife.ButterKnife;
 public class FragmentEdit extends Fragment implements ImageButton.OnClickListener, SeekBar.OnSeekBarChangeListener {
     View view;
     FragmentEditListener listener;
+    int colorMax = 255;
+    int pourcentMax = 100;
+    int degresMax = 360;
 
     @BindView(R.id.brightness)
     ImageButton brightness;
@@ -44,8 +47,6 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     LinearLayout seekBarLayout;
     @BindView(R.id.filtersLayout)
     LinearLayout filtersLayout;
-    @BindView(R.id.sobel)
-    Button sobel;
 
     String Tag ="";
     int progress;
@@ -68,7 +69,6 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         blur.setOnClickListener(this);
         hue.setOnClickListener(this);
         saturation.setOnClickListener(this);
-        sobel.setOnClickListener(this);
         cancel.setOnClickListener(this);
         validate.setOnClickListener(this);
 
@@ -83,33 +83,33 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
             switch (v.getId()){
                 case R.id.brightness :
-                    seekBarControl.setMax(200);
-                    seekBarControl.setProgress(100);
+                    seekBarControl.setMax(pourcentMax*2);
+                    seekBarControl.setProgress(pourcentMax);
                     Tag = "brightness";
                     break;
                 case R.id.saturation :
-                    seekBarControl.setMax(200);
-                    seekBarControl.setProgress(100);
+                    seekBarControl.setMax(pourcentMax*2);
+                    seekBarControl.setProgress(pourcentMax);
                     Tag = "saturation";
                     break;
                 case R.id.contrast :
-                    seekBarControl.setMax(500);
-                    seekBarControl.setProgress(255);
+                    seekBarControl.setMax(colorMax*2);
+                    seekBarControl.setProgress(colorMax);
                     Tag = "contrast";
                     break;
                 case R.id.blurring :
-                    seekBarControl.setMax(3);
+                    seekBarControl.setMax(4);
                     seekBarControl.setProgress(0);
                     Tag = "blur";
                     break;
                 case R.id.sobel :
-                    seekBarControl.setMax(510);
-                    seekBarControl.setProgress(255);
+                    seekBarControl.setMax(colorMax*2);
+                    seekBarControl.setProgress(colorMax);
                     Tag = "sobel";
                     break;
                 case R.id.hue :
-                    seekBarControl.setMax(360);
-                    seekBarControl.setProgress(180);
+                    seekBarControl.setMax(degresMax);
+                    seekBarControl.setProgress(degresMax/2);
                     Tag = "hue";
                     break;
             }
@@ -140,19 +140,19 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         if (this.listener != null) {
             switch (Tag) {
                 case "brightness":
-                    this.progress = progress - 100;
+                    this.progress = progress - pourcentMax;
                     break;
                 case "saturation":
-                    this.progress = progress - 100;
+                    this.progress = progress - pourcentMax;
                     break;
                 case "contrast":
-                    this.progress = progress - 255;
+                    this.progress = progress - colorMax;
                     break;
                 case "blur":
-                    this.progress = progress*2+1;
+                    this.progress = progress*2+1; // to be a impair number
                     break;
                 case "hue":
-                    this.progress = progress-180;
+                    this.progress = progress-(degresMax/2);
                     break;
                 default:
                     this.progress = progress;
