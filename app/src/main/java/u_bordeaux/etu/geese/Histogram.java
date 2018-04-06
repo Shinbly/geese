@@ -24,7 +24,7 @@ public class Histogram {
 
         for (int i = 0; i < img.getNbPixels(); i++) {
             value = (30*Color.red(pixels[i]) + 59*Color.green(pixels[i]) + 11*Color.blue(pixels[i]))/100;
-            histo[value]+=1;
+            histo[value] += 1;
         }
     }
 

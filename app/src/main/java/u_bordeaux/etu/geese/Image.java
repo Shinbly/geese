@@ -103,7 +103,7 @@ public class Image {
     public Bitmap getPreview(int width, int height) {
         float ratio = (float)(getWidth())/(float)getHeight();
 
-        if(ratio<1) {
+        if(ratio < 1) {
             return Bitmap.createScaledBitmap(bmp, (int)(height*ratio), height, true);
         }else{
             return Bitmap.createScaledBitmap(bmp, width, (int)(width/ratio), true);
