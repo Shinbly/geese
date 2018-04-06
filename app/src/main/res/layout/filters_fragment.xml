@@ -1,49 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_centerVertical="true"
-    android:background="@color/colorWhite">
+    android:isScrollContainer="false"
+    android:background="@color/colorWhite"
+    android:scrollbars="none">
 
-    <ScrollView
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_above="@+id/gray"
+                android:gravity="center_horizontal"
+                android:text="Gray"/>
+
+            <ImageButton
+                android:id="@+id/gray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
+                android:text="Gray" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/gray"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gray" />
-
-            <Button
+                android:text="Sepia"/>
+            <ImageButton
                 android:id="@+id/sepia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
                 android:text="Sepia" />
+        </LinearLayout>
 
-            <Button
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Negatif"/>
+            <ImageButton
+                android:id="@+id/negatif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
+                android:text="Negatif" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Equalization"/>
+            <ImageButton
                 android:id="@+id/egalization"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
                 android:text="Egalization" />
+        </LinearLayout>
 
-            <Button
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Linear Extension"/>
+            <ImageButton
                 android:id="@+id/linearExtention"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
                 android:text="Linear Extention" />
         </LinearLayout>
-    </ScrollView>
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sobel"/>
+            <ImageButton
+                android:id="@+id/sobel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
+                android:text="Sobel" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Laplacien"/>
+            <ImageButton
+                android:id="@+id/laplacien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
+                android:text="laplacien" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</HorizontalScrollView>

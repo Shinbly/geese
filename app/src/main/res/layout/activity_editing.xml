@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="u_bordeaux.etu.geese.EditingActivity"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -13,7 +14,7 @@
         android:background="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="4dp"
+        android:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
@@ -22,28 +23,29 @@
         android:layout_width="match_parent"
         android:layout_height="450dp"
         android:gravity="center"
-        android:elevation="0dp"
         android:background="@color/colorWhite"
-        android:id="@+id/appbarid">
+        android:id="@+id/appbarid"
+        app:elevation="0dp">
 
         <ImageView
             android:id="@+id/imageViewEditid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:scaleType="matrix" />
+            android:padding="10dp"/>
     </android.support.design.widget.AppBarLayout>
+
+    <u_bordeaux.etu.geese.NonSwipeableViewPager
+        android:id="@+id/viewpagerid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <android.support.design.widget.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabGravity="fill"
         app:tabMode="fixed"
-        app:tabIndicatorColor="@android:color/white"
+        app:tabIndicatorColor="@color/colorBarTabLayout"
         android:id="@+id/tablayoutid"/>
-    <android.support.v4.view.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/viewpagerid"/>
 
 </LinearLayout>

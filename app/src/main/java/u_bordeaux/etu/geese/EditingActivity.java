@@ -2,11 +2,14 @@ package u_bordeaux.etu.geese;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -21,9 +24,11 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.v7.widget.Toolbar;
+import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
 import java.io.File;
@@ -37,31 +42,40 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
+    private boolean working;
+
 
     private ImageView imageView;
 
     private Bitmap bmp;
     Image img;
     Image preview;
+    Image thumbnail;
 
     private Uri pathImg;
 
 
-    Matrix matrix = new Matrix();
     Float scale = 1f;
     ScaleGestureDetector SGD;
 
-    private ImageButton brightness;
-    private ImageButton contrast;
-    private ImageButton hue;
-    private Button gray;
-    private Button sepia;
 
     private int cptImage =0;
 
     FragmentFilters fragmentFilters;
     FragmentEdit fragmentEdit;
 
+    ViewPagerAdapter adapter;
+
+    public static Context context;
+
+
+    public Uri getPathImg(){
+        return pathImg;
+    }
+
+    public static Context getContext(){
+        return context;
+    }
 
     private String save(Bitmap bmp, String img_name){
         String root = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DCIM + "/geese";
@@ -97,14 +111,13 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     private void setupViewPager(ViewPager viewPager) {
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         fragmentFilters= new FragmentFilters();
         fragmentFilters.setListener(this);
 
 
         fragmentEdit= new FragmentEdit();
         fragmentEdit.setListener(this);
-
 
         adapter.addFragment(fragmentFilters, "Filters");
         adapter.addFragment(fragmentEdit, "Edit");
@@ -134,6 +147,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
+        context = getApplicationContext();
+
 
         Intent intent = getIntent();
         pathImg = (Uri) intent.getParcelableExtra("pathBitmap");
@@ -153,103 +168,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         SGD = new ScaleGestureDetector(this, new ScaleListener());
 
 
-
-
-
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            float downX, downY;
-            int totalX, totalY;
-            int scrollByX, scrollByY;
-            int maxX = (int)(((img.getWidth()*scale) / 2) - (imageView.getWidth() / 2));
-            int maxY = (int)(((img.getHeight()*scale) / 2) - (imageView.getHeight() / 2));
-            // set scroll limits
-            int maxLeft = (maxX * -1);
-            int maxRight = maxX;
-            int maxTop = (maxY * -1);
-            int maxBottom = maxY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                SGD.onTouchEvent(event);
-                float currentX, currentY;
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        downX = event.getX();
-                        downY = event.getY();
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        currentX = event.getX();
-                        currentY = event.getY();
-                        scrollByX = (int) (downX - currentX);
-                        scrollByY = (int) (downY - currentY);
-
-                        // scrolling to left side of image (pic moving to the right)
-                        if (currentX > downX) {
-                            if (totalX == maxLeft) {
-                                scrollByX = 0;
-                            }
-                            if (totalX > maxLeft) {
-                                totalX = totalX + scrollByX;
-                            }
-                            if (totalX < maxLeft) {
-                                scrollByX = maxLeft - (totalX - scrollByX);
-                                totalX = maxLeft;
-                            }
-                        }
-
-                        // scrolling to right side of image (pic moving to the left)
-                        if (currentX < downX) {
-                            if (totalX == maxRight) {
-                                scrollByX = 0;
-                            }
-                            if (totalX < maxRight) {
-                                totalX = totalX + scrollByX;
-                            }
-                            if (totalX > maxRight) {
-                                scrollByX = maxRight - (totalX - scrollByX);
-                                totalX = maxRight;
-                            }
-                        }
-
-                        // scrolling to top of image (pic moving to the bottom)
-                        if (currentY > downY) {
-                            if (totalY == maxTop) {
-                                scrollByY = 0;
-                            }
-                            if (totalY > maxTop) {
-                                totalY = totalY + scrollByY;
-                            }
-                            if (totalY < maxTop) {
-                                scrollByY = maxTop - (totalY - scrollByY);
-                                totalY = maxTop;
-                            }
-                        }
-
-                        // scrolling to bottom of image (pic moving to the top)
-                        if (currentY < downY) {
-                            if (totalY == maxBottom) {
-                                scrollByY = 0;
-                            }
-                            if (totalY < maxBottom) {
-                                totalY = totalY + scrollByY;
-                            }
-                            if (totalY > maxBottom) {
-                                scrollByY = maxBottom - (totalY - scrollByY);
-                                totalY = maxBottom;
-                            }
-                        }
-                        imageView.scrollBy(scrollByX, scrollByY);
-                        downX = currentX;
-                        downY = currentY;
-                        break;
-                }
-                return true;
-            }
-        });
-
-
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("bmp",pathImg);
     }
 
     @Override
@@ -291,109 +211,119 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     @Override
     public void onFilterSelected(String TAG) {
-        switch(TAG){
-            case "brightness":
-                Filters.brightness(img,50);
-                break;
-            case "contrast":
-                Histogram.equalization(img);
-                break;
-            case "blur":
-                Convolution.moyenneur(img,5);
-                break;
-            case "gray":
-                Filters.toGray(img);
-                break;
-            case "sepia":
-                Filters.sepia(img);
-                break;
-            case "hue":
-                Filters.hue(img,(int)(Math.random()*360));
-                break;
-            case "egalization" :
-                Histogram.equalization(img);
-                break;
-            case "linearExtention" :
-                Histogram.linearExtension(img);
-
-            default:
-                Log.i("error ", "onFilterSelected: wrong tag");
-                break;
-        }
-        imageView.invalidate();
+        Log.i(TAG, "onFilterSelected: ");
+        filterSelection(TAG,-1,img);
     }
 
     @Override
     public void onPreviewSelected(String TAG, int progress) {
-        preview.restore();
-        switch(TAG){
-            case "brightness":
-                Filters.brightness(preview,progress);
-                break;
-            case "contrast":
-                //Histogram.equalization(preview,progress);
-                break;
-            case "blur":
-                Convolution.gaussien(preview,progress);
-                break;
-            case "hue":
-                Filters.hue(preview,progress);
-                break;
-            default:
-                Log.i("error ", "onFilterSelected: wrong tag");
-                break;
-        }
-        imageView.invalidate();
-        Log.i(TAG, "onPreviewSelected: "+progress);
+        filterSelection(TAG, progress, preview);
     }
 
     @Override
     public void onPreviewStart() {
         preview = new Image(img.getPreview(imageView.getWidth(),imageView.getHeight()));
-        imageView.setImageBitmap(preview.getBmp());
-        imageView.invalidate();
-        Log.i("creation", "onPreviewStart: preview created");
-
     }
 
     @Override
     public void onFilterSelected(String TAG, int progress) {
+        filterSelection(TAG,progress,img);
 
-        switch(TAG){
-            case "brightness":
-                Filters.brightness(img,progress);
-                break;
-            case "contrast":
-                //Histogram.equalization(img,progress);
-                break;
-            case "blur":
-                Convolution.gaussien(img,progress);
-                break;
-            case "hue":
-                Filters.hue(img,progress);
-                break;
-            default:
-                Log.i("error ", "onFilterSelected: wrong tag");
-                break;
-        }
-        imageView.setImageBitmap(img.getBmp());
-        imageView.invalidate();
     }
-/*
+
+    public void filterSelection(String TAG, int progress, Image img){
+        if (working == false){
+            working = true;
+
+            if (img == preview){
+                preview.restore();
+            }
+            taskFilters exec = new taskFilters(TAG, progress, img);
+            exec.execute();
+        }
+
+
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         SGD.onTouchEvent(event);
         return true;
-    }*/
+    }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            scale = scale * detector.getScaleFactor();
-            scale = Math.max(((float)imageView.getHeight()/(float)img.getHeight())/1.3f, Math.min(scale,5f));
-            matrix.setScale(scale,scale);
-            imageView.setImageMatrix(matrix);
+            scale = imageView.getScaleX() * detector.getScaleFactor();
+            imageView.setScaleX(scale);
+            imageView.setScaleY(scale);
+            imageView.invalidate();
             return true;
+        }
+    }
+
+    private class taskFilters extends AsyncTask{
+        private String TAG;
+        private int progress;
+        private Image img;
+
+        public taskFilters (String TAG, int progress, Image img){
+            this.TAG = TAG;
+            this.progress = progress;
+            this.img = img;
+        }
+        @Override
+        protected Object doInBackground(Object... objects) {
+            switch(TAG){
+                case "brightness":
+                    Filters.brightness(img,progress);
+                    break;
+                case "saturation":
+                    Filters.saturationRs(img,progress,context);
+                    break;
+                case "contrast":
+                    Filters.contrast(img,progress);
+                    break;
+                case "blur":
+                    Convolution.gaussien(img,progress,context);
+                    break;
+                case "hue":
+                    Filters.hueRs(img,progress,context);
+                    break;
+                case "gray":
+                    Filters.toGray(img);
+                    break;
+                case "sepia":
+                    Filters.sepia(img);
+                    break;
+                case "egalization" :
+                    Histogram.equalization(img);
+                    break;
+                case "linearExtention" :
+                    Histogram.linearExtension(img);
+                    break;
+                case "negatif" :
+                    Filters.negatif(img);
+                    break;
+                case "sobel" :
+                    Convolution.sobelRS(img,context);
+                    break;
+                case "Laplacien" :
+                    Convolution.laplacien(img,context);
+                    break;
+                case "cancel":
+                    break;
+            }
+            Log.i(TAG, "in doInBackground: ");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            imageView.setImageBitmap(img.getBmp());
+            imageView.invalidate();
+            working = false;
+            Log.i(TAG, "done onPostExecute: ");
         }
     }
 }

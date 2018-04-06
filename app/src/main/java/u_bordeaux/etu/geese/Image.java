@@ -3,6 +3,7 @@ package u_bordeaux.etu.geese;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 
 /**
  * Created by Lalie on 06/02/2018.
@@ -18,7 +19,7 @@ public class Image {
     /**
      *
      */
-    final private int[] backup;
+    private int[] backup;
 
 
     /**
@@ -30,8 +31,10 @@ public class Image {
         bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
-    public void setBmp(){
-
+    public void setBmp(Bitmap bmp){
+        this.bmp = bmp;
+        this.backup = new int[bmp.getHeight()*bmp.getWidth()];
+        bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
     public Bitmap getBmp() {
@@ -44,6 +47,10 @@ public class Image {
             return Bitmap.createScaledBitmap(bmp,(int)(height*ratio),height,true);
         else
             return Bitmap.createScaledBitmap(bmp,width,(int)(width/ratio),true);
+    }
+
+    public Bitmap getThumbnail(int width, int height) {
+        return Bitmap.createScaledBitmap(bmp, width, height,false);
     }
 
     public int getWidth(){

@@ -3,7 +3,6 @@ package u_bordeaux.etu.geese;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +15,13 @@ import android.widget.SeekBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Lalie on 03/03/2018.
- */
 
 public class FragmentEdit extends Fragment implements ImageButton.OnClickListener, SeekBar.OnSeekBarChangeListener {
     View view;
     FragmentEditListener listener;
+    int colorMax = 255;
+    int pourcentMax = 100;
+    int degresMax = 360;
 
     @BindView(R.id.brightness)
     ImageButton brightness;
@@ -32,13 +31,14 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     ImageButton blur;
     @BindView(R.id.hue)
     Button hue;
+    @BindView(R.id.saturation)
+    Button saturation;
     @BindView(R.id.seekBarEdit)
     SeekBar seekBarControl;
     @BindView(R.id.cancel)
     Button cancel;
     @BindView(R.id.validate)
     Button validate;
-
     @BindView(R.id.seekBarLayout)
     LinearLayout seekBarLayout;
     @BindView(R.id.filtersLayout)
@@ -64,7 +64,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         contrast.setOnClickListener(this);
         blur.setOnClickListener(this);
         hue.setOnClickListener(this);
-
+        saturation.setOnClickListener(this);
         cancel.setOnClickListener(this);
         validate.setOnClickListener(this);
 
@@ -76,38 +76,57 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         Log.i("listener", "on click :  "+this.listener);
 
         if (this.listener != null) {
-            if (v.getId() == R.id.brightness) {
-                seekBarControl.setMax(200);
-                seekBarControl.setProgress(100);
-                Tag = "brightness";
-            }
-            if (v.getId() == R.id.contrast) {
-                seekBarControl.setMax(200);
-                seekBarControl.setProgress(100);
-                Tag = "contrast";
-            }
-            if (v.getId() == R.id.blurring) {
-                seekBarControl.setMax(3);
-                seekBarControl.setProgress(0);
-                Tag = "blur";
-            }
-            if (v.getId() == R.id.hue) {
-                seekBarControl.setMax(360);
-                seekBarControl.setProgress(180);
-                Tag = "hue";
+
+            switch (v.getId()){
+                case R.id.brightness :
+                    seekBarControl.setMax(pourcentMax*2);
+                    seekBarControl.setProgress(pourcentMax);
+                    Tag = "brightness";
+                    break;
+                case R.id.saturation :
+                    seekBarControl.setMax(pourcentMax*2);
+                    seekBarControl.setProgress(pourcentMax);
+                    Tag = "saturation";
+                    break;
+                case R.id.contrast :
+                    seekBarControl.setMax(colorMax*2);
+                    seekBarControl.setProgress(colorMax);
+                    Tag = "contrast";
+                    break;
+                case R.id.blurring :
+                    seekBarControl.setMax(4);
+                    seekBarControl.setProgress(0);
+                    Tag = "blur";
+                    break;
+                case R.id.sobel :
+                    seekBarControl.setMax(colorMax*2);
+                    seekBarControl.setProgress(colorMax);
+                    Tag = "sobel";
+                    break;
+                case R.id.hue :
+                    seekBarControl.setMax(degresMax);
+                    seekBarControl.setProgress(degresMax/2);
+                    Tag = "hue";
+                    break;
             }
             if (v.getId() == R.id.validate) {
                 listener.onFilterSelected(Tag,progress);
             }
+            if (v.getId() == R.id.cancel) {
+                listener.onFilterSelected("cancel",progress);
+            }
             if (v.getId() == R.id.cancel || v.getId() == R.id.validate) {
+
                 seekBarLayout.setVisibility(View.INVISIBLE);
                 filtersLayout.setVisibility(View.VISIBLE);
+
             }else{
                 seekBarLayout.setVisibility(View.VISIBLE);
                 filtersLayout.setVisibility(View.INVISIBLE);
             }
 
             seekBarControl.setOnSeekBarChangeListener(this);
+            listener.onPreviewStart();
 
         }
     }
@@ -117,13 +136,19 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         if (this.listener != null) {
             switch (Tag) {
                 case "brightness":
-                    this.progress = progress - 100;
+                    this.progress = progress - pourcentMax;
+                    break;
+                case "saturation":
+                    this.progress = progress - pourcentMax;
+                    break;
+                case "contrast":
+                    this.progress = progress - colorMax;
                     break;
                 case "blur":
-                    this.progress = progress*2+1;
+                    this.progress = progress*2+1; // to be a impair number
                     break;
                 case "hue":
-                    this.progress = progress-180;
+                    this.progress = progress-(degresMax/2);
                     break;
                 default:
                     this.progress = progress;
@@ -136,11 +161,6 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        if (this.listener != null) {
-            listener.onPreviewStart();
-        }
-        else
-            Log.i("listener", "onStartTrackingTouch: listener null");
     }
 
     @Override
