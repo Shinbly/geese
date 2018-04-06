@@ -84,7 +84,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
                     tag = "linearExtention";
                     break;
                 case R.id.negatif :
-                    tag ="negatif";
+                    tag ="negative";
                     break;
                 case  R.id.laplacien :
                     tag = "laplacien";

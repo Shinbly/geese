@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -22,14 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Filter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.v7.widget.Toolbar;
-import android.widget.ProgressBar;
-import android.widget.ShareActionProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -289,8 +281,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 case "linearExtention" :
                     Histogram.linearExtension(img);
                     break;
-                case "negatif" :
-                    Filters.negatif(img);
+                case "negative" :
+                    Filters.negative(img);
                     break;
                 case "sobel" :
                     Convolution.sobelRS(img,context);
