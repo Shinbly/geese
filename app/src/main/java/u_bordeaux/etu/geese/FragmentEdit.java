@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TableLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +42,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
     @BindView(R.id.validate)
     Button validate;
     @BindView(R.id.seekBarLayout)
-    LinearLayout seekBarLayout;
+    RelativeLayout seekBarLayout;
     @BindView(R.id.filtersLayout)
     LinearLayout filtersLayout;
 

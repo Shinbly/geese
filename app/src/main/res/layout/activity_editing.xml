@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     tools:context="u_bordeaux.etu.geese.EditingActivity"
     android:background="@color/colorWhite"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/layout_activity_edit">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:minHeight="?attr/actionBarSize"
         android:background="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,9 +29,10 @@
 
         <ImageView
             android:id="@+id/imageViewEditid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            android:layout_margin="0dp"/>
     </android.support.design.widget.AppBarLayout>
 
     <u_bordeaux.etu.geese.NonSwipeableViewPager
