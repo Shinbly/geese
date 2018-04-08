@@ -3,15 +3,20 @@ package u_bordeaux.etu.geese;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v8.renderscript.*;
-import android.util.Log;
+
 
 /**
- * Created by jfachan on 16/02/18.
+ *
  */
 
 public class Convolution {
 
-
+    /**
+     * Method convolution
+     * @param img
+     * @param pixels
+     * @param filtre
+     */
     private static void convolution(Image img, int [] pixels, double []filtre) {
         int f_size = (int) Math.sqrt(filtre.length);
         int side= f_size/2;
@@ -45,10 +50,16 @@ public class Convolution {
                 pixels[x+img.getWidth()*y] = Color.rgb((int) (newRed/coeff),(int) (newGreen/coeff),(int) (newBlue/coeff));
             }
         }
-
-
-
     }
+
+
+    /**
+     *
+     * @param img
+     * @param pixels
+     * @param mask
+     * @param context
+     */
     private static void convolutionRS(Image img, int [] pixels, double []mask,Context context){
         int width = img.getWidth();
         int height = img.getHeight();
@@ -79,6 +90,12 @@ public class Convolution {
     }
 
 
+    /**
+     *
+     * @param img
+     * @param size_mask
+     * @param context
+     */
     public static void moyenneur(Image img, int size_mask,Context context) {
         double mask[]= new double[size_mask*size_mask];
         for (int i = 0; i< size_mask*size_mask; i++){
@@ -91,6 +108,12 @@ public class Convolution {
 
     }
 
+    /**
+     *
+     * @param img
+     * @param size_mask
+     * @param context
+     */
     public static void gaussien(Image img, int size_mask,Context context) {
         double mask[]= new double[size_mask*size_mask];
         double coeff = 0;
@@ -117,6 +140,11 @@ public class Convolution {
     }
 
 
+    /**
+     *
+     * @param img
+     * @param context
+     */
     public static void sobel(Image img,Context context) {
         int newRed;
         int newGreen;
@@ -138,10 +166,14 @@ public class Convolution {
         }
         img.setPixels(pixels);
 
-
-
-
     }
+
+
+    /**
+     *
+     * @param img
+     * @param context
+     */
     public static void sobelRS(Image img, Context context){
 
         Filters.toGray(img);
@@ -172,6 +204,12 @@ public class Convolution {
 
     }
 
+
+    /**
+     *
+     * @param img
+     * @param context
+     */
     public static void laplacien(Image img,Context context) {
 
         double mask_4cx[]= {0,1,0,1,-4,1,0,1,0};
