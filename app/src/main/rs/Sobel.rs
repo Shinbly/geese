@@ -37,11 +37,12 @@ unsigned int RS_KERNEL sobel(unsigned int in, uint32_t x, uint32_t y) {
                 //R = fmax(fabs(R), fabs(R2));
 
 
-                R = sqrt((R * R) + (R2 * R2));
 
             }
         }
     }
+    R = sqrt((R * R) + (R2 * R2));
+    R = fmin(R,255);
     out = ((int)R & 0xff) << 16 | ((int)R & 0xff) << 8 | ((int)R & 0xff);
     return out;
 }
