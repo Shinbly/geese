@@ -202,6 +202,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     @Override
     public void onPreviewStart() {
         preview = new Image(img.getPreview(imageView.getWidth(),imageView.getHeight()));
+        imageView.setImageBitmap(preview.getBmp());
     }
 
     @Override
