@@ -3,51 +3,64 @@ package u_bordeaux.etu.geese;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
 /**
- * Created by Lalie on 03/03/2018.
+ * Class FragmentFilters, represents the fragment that handles the different filters buttons
  */
 
 public class FragmentFilters extends Fragment implements Button.OnClickListener {
-    View view;
-    String tag;
+
+    private View view;
+
+
     private FragmentFiltersListener listener;
 
+    /**
+     * All the buttons of the fragment plus the seekbar
+     */
     @BindView(R.id.gray)
-    Button gray;
+    private Button gray;
 
     @BindView(R.id.sepia)
-    Button sepia;
+    private Button sepia;
 
     @BindView(R.id.egalization)
-    Button egalization;
+    private Button egalization;
 
     @BindView(R.id.linearExtention)
-    Button linearExtention;
+    private Button linearExtention;
 
     @BindView(R.id.negatif)
-    Button negatif;
+    private Button negatif;
 
     @BindView(R.id.sobel)
-    Button sobel;
+    private Button sobel;
 
     @BindView(R.id.laplacien)
-    Button laplacien;
+    private Button laplacien;
+
+    /**
+     * The tag to know which button had been pressed
+     * The tag is pass to the activity with the interface FragmentFiltersListener
+     */
+    private String Tag = "";
 
 
-
-
+    /**
+     * Setter of the listener of the Fragment
+     * @param listener
+     */
     public void setListener(FragmentFiltersListener listener) {
         this.listener = listener;
     }
+
 
     @Nullable
     @Override
@@ -64,42 +77,58 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         sobel.setOnClickListener(this);
 
         return view;
-
     }
+
 
     @Override
     public void onClick(View v) {
         if (this.listener != null) {
+
             switch (v.getId()){
                 case R.id.gray :
-                    tag ="gray";
+                    Tag ="gray";
                     break;
+
                 case  R.id.sepia:
-                    tag = "sepia";
+                    Tag = "sepia";
                     break;
+
                 case  R.id.egalization:
-                    tag = "egalization";
+                    Tag = "egalization";
                     break;
+
                 case  R.id.linearExtention :
-                    tag = "linearExtention";
+                    Tag = "linearExtention";
                     break;
+
                 case R.id.negatif :
-                    tag ="negative";
+                    Tag ="negative";
                     break;
+
                 case  R.id.laplacien :
-                    tag = "laplacien";
+                    Tag = "laplacien";
                     break;
+
                 case  R.id.sobel :
-                    tag = "sobel";
+                    Tag = "sobel";
                     break;
             }
-            Log.i(tag, "in onClick: ");
-            listener.onFilterSelected(tag);
+
+            listener.onFilterSelected(Tag);
         }
     }
 
 
+    /**
+     * Interface FragmentFiltersListener
+     */
     public interface FragmentFiltersListener {
+
+        /**
+         * Method onFilterSelected
+         * Applies the filter on the original image when the modification is done
+         * @param TAG a string which matches the button clicked
+         */
         void onFilterSelected(String TAG);
     }
 }

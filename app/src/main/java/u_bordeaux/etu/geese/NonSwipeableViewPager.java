@@ -9,9 +9,6 @@ import android.widget.Scroller;
 
 import java.lang.reflect.Field;
 
-/**
- * Created by Lalie on 01/04/2018.
- */
 
 public class NonSwipeableViewPager extends ViewPager {
 
@@ -20,10 +17,12 @@ public class NonSwipeableViewPager extends ViewPager {
         setMyScroller();
     }
 
+
     public NonSwipeableViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         setMyScroller();
     }
+
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -31,11 +30,13 @@ public class NonSwipeableViewPager extends ViewPager {
         return false;
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         //idem
         return false;
     }
+
 
     private void setMyScroller(){
         try{
@@ -47,6 +48,7 @@ public class NonSwipeableViewPager extends ViewPager {
             e.printStackTrace();
         }
     }
+
 
     public class MyScroller extends Scroller {
 

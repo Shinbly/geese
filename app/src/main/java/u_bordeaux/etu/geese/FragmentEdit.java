@@ -3,8 +3,6 @@ package u_bordeaux.etu.geese;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,47 +14,82 @@ import android.widget.SeekBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
 /**
- * Created by Lalie on 03/03/2018.
+ * Class FragmentEdit, represents the fragment which handle the different editing buttons
  */
 
 public class FragmentEdit extends Fragment implements ImageButton.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    View view;
-    FragmentEditListener listener;
-    int colorMax = 255;
-    int pourcentMax = 100;
-    int degresMax = 360;
 
+    private View view;
+
+
+    private FragmentEditListener listener;
+
+
+    /**
+     * Constants for the seekbars
+     */
+    private int colorMax = 255;
+    private int pourcentMax = 100;
+    private int degresMax = 360;
+
+
+    /**
+     * All the buttons of the fragment plus the seekbar
+     */
     @BindView(R.id.brightness)
-    ImageButton brightness;
+    private ImageButton brightness;
+
     @BindView(R.id.contrast)
-    ImageButton contrast;
+    private ImageButton contrast;
+
     @BindView(R.id.blurring)
-    ImageButton blur;
+    private ImageButton blur;
+
     @BindView(R.id.hue)
-    Button hue;
+    private Button hue;
+
     @BindView(R.id.saturation)
-    Button saturation;
+    private Button saturation;
+
     @BindView(R.id.seekBarEdit)
-    SeekBar seekBarControl;
+    private SeekBar seekBarControl;
+
     @BindView(R.id.cancel)
-    Button cancel;
+    private Button cancel;
+
     @BindView(R.id.validate)
-    Button validate;
+    private Button validate;
+
     @BindView(R.id.seekBarLayout)
-    LinearLayout seekBarLayout;
+    private LinearLayout seekBarLayout;
+
     @BindView(R.id.filtersLayout)
-    LinearLayout filtersLayout;
+    private LinearLayout filtersLayout;
 
-    String Tag ="";
-    int progress;
 
-    public FragmentEdit() {
-    }
+    /**
+     * The tag to know which button had been pressed
+     * The tag is pass to the activity with the interface FragmentEditListener
+     */
+    private String Tag = "";
 
+
+    /**
+     * The value which will be given to the method of Filters based on the value set on the seekbar
+     */
+    private int progress;
+
+
+    /**
+     * Setter of the listener of the Fragment
+     * @param listener
+     */
     public void setListener(FragmentEditListener listener) {
         this.listener = listener;
     }
+
 
     @Nullable
     @Override
@@ -75,10 +108,9 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
         return view;
     }
 
+
     @Override
     public void onClick(View v) {
-        Log.i("listener", "on click :  "+this.listener);
-
         if (this.listener != null) {
 
             switch (v.getId()){
@@ -87,38 +119,46 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
                     seekBarControl.setProgress(pourcentMax);
                     Tag = "brightness";
                     break;
+
                 case R.id.saturation :
                     seekBarControl.setMax(pourcentMax*2);
                     seekBarControl.setProgress(pourcentMax);
                     Tag = "saturation";
                     break;
+
                 case R.id.contrast :
                     seekBarControl.setMax(colorMax*2);
                     seekBarControl.setProgress(colorMax);
                     Tag = "contrast";
                     break;
+
                 case R.id.blurring :
                     seekBarControl.setMax(4);
                     seekBarControl.setProgress(0);
                     Tag = "blur";
                     break;
+
                 case R.id.sobel :
                     seekBarControl.setMax(colorMax*2);
                     seekBarControl.setProgress(colorMax);
                     Tag = "sobel";
                     break;
+
                 case R.id.hue :
                     seekBarControl.setMax(degresMax);
                     seekBarControl.setProgress(degresMax/2);
                     Tag = "hue";
                     break;
             }
+
             if (v.getId() == R.id.validate) {
                 listener.onFilterSelected(Tag,progress);
             }
+
             if (v.getId() == R.id.cancel) {
                 listener.onFilterSelected("cancel",progress);
             }
+
             if (v.getId() == R.id.cancel || v.getId() == R.id.validate) {
 
                 seekBarLayout.setVisibility(View.INVISIBLE);
@@ -131,51 +171,84 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
             seekBarControl.setOnSeekBarChangeListener(this);
             listener.onPreviewStart();
-
         }
     }
+
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (this.listener != null) {
+
             switch (Tag) {
                 case "brightness":
                     this.progress = progress - pourcentMax;
                     break;
+
                 case "saturation":
                     this.progress = progress - pourcentMax;
                     break;
+
                 case "contrast":
                     this.progress = progress - colorMax;
                     break;
+
                 case "blur":
                     this.progress = progress*2+1; // to be a impair number
                     break;
+
                 case "hue":
                     this.progress = progress-(degresMax/2);
                     break;
+
                 default:
                     this.progress = progress;
                     break;
             }
             listener.onPreviewSelected(Tag, (this.progress));
         }
-
     }
+
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
     }
+
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
 
-    public interface FragmentEditListener {
-        void onPreviewSelected(String TAG,int progress);
-        void onPreviewStart();
-        void onFilterSelected(String TAG,int progress);
 
+    /**
+     * Interface FragmentEditListener
+     * Acts as a bond between the fragment and the EditingActivity
+     */
+    public interface FragmentEditListener {
+
+        /**
+         * Method onPreviewStart
+         * Creates a preview
+         */
+        void onPreviewStart();
+
+
+        /**
+         * Method onPreviewSelected
+         * Applies the method of Filters corresponding to the TAG on the preview according to the
+         * changes of the seekbar (progress)
+         * @param TAG a string which matches the button clicked
+         * @param progress the value to pass to the methods of Filters
+         */
+        void onPreviewSelected(String TAG,int progress);
+
+
+        /**
+         * Method onFilter
+         * Applies the filter on the original image when the modification is done
+         * @param TAG a string which matches the button clicked
+         * @param progress the value to pass to the methods of Filters
+         */
+        void onFilterSelected(String TAG,int progress);
     }
 }
