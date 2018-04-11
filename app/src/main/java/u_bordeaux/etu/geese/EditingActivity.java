@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -20,8 +22,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Filter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.v7.widget.Toolbar;
+import android.widget.ProgressBar;
+import android.widget.ShareActionProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,6 +50,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     private Bitmap bmp;
     Image img;
     Image preview;
+    Image thumbnail;
 
     private Uri pathImg;
 
@@ -55,8 +64,18 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     FragmentFilters fragmentFilters;
     FragmentEdit fragmentEdit;
 
-    Context context;
+    ViewPagerAdapter adapter;
 
+    public static Context context;
+
+
+    public Uri getPathImg(){
+        return pathImg;
+    }
+
+    public static Context getContext(){
+        return context;
+    }
 
     private String save(Bitmap bmp, String img_name){
         String root = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DCIM + "/geese";
@@ -92,14 +111,13 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     private void setupViewPager(ViewPager viewPager) {
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         fragmentFilters= new FragmentFilters();
         fragmentFilters.setListener(this);
 
 
         fragmentEdit= new FragmentEdit();
         fragmentEdit.setListener(this);
-
 
         adapter.addFragment(fragmentFilters, "Filters");
         adapter.addFragment(fragmentEdit, "Edit");
@@ -149,6 +167,9 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         }
         SGD = new ScaleGestureDetector(this, new ScaleListener());
 
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("bmp",pathImg);
     }
 
     @Override
@@ -281,8 +302,8 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 case "linearExtention" :
                     Histogram.linearExtension(img);
                     break;
-                case "negative" :
-                    Filters.negative(img);
+                case "negatif" :
+                    Filters.negatif(img);
                     break;
                 case "sobel" :
                     Convolution.sobelRS(img,context);

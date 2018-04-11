@@ -1,9 +1,11 @@
 package u_bordeaux.etu.geese;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.widget.ImageView;
 
+import android.net.Uri;
 
 /**
  * Class Image, represents the image on which all the modifications will be apply
@@ -20,7 +22,7 @@ public class Image {
     /**
      * an array which contains all the initials pixels of the image for the function restore
      */
-    final private int[] backup;
+    private int[] backup;
 
 
 
@@ -42,6 +44,12 @@ public class Image {
      * Getter for the bitmap
      * @return the field bmp, the bitmap of the image
      */
+    public void setBmp(Bitmap bmp){
+        this.bmp = bmp;
+        this.backup = new int[bmp.getHeight()*bmp.getWidth()];
+        bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
+    }
+
     public Bitmap getBmp() {
         return bmp;
     }
@@ -52,6 +60,11 @@ public class Image {
      * @return the width of the bitmap
      */
     public int getWidth() {
+    public Bitmap getThumbnail(int width, int height) {
+        return Bitmap.createScaledBitmap(bmp, width, height,false);
+    }
+
+    public int getWidth(){
         return bmp.getWidth();
     }
 

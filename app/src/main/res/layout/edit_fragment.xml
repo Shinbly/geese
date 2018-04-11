@@ -7,104 +7,113 @@
     android:background="@color/colorWhite">
 
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
         <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:id="@+id/seekBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="invisible">
 
-            <LinearLayout
-                android:id="@+id/seekBarLayout"
+            <SeekBar
+                android:id="@+id/seekBarEdit"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="invisible">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"/>
 
-                <SeekBar
-                    android:id="@+id/seekBarEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/validate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/seekBarEdit"
+                    android:elevation="0dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="Validate" />
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/colorWhite"
+                    android:layout_below="@+id/seekBarEdit"
+                    android:elevation="0dp"
+                    android:layout_marginRight="10dp"
+                    android:text="Cancel" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/filtersLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <HorizontalScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/validate"
-                        android:layout_width="122dp"
-                        android:layout_height="wrap_content"
-                        android:text="Validate" />
-
-                    <Button
-                        android:id="@+id/cancel"
+                    <ImageButton
+                        android:id="@+id/brightness"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cancel" />
+                        android:layout_marginRight="@dimen/margin_right_button"
+                        android:background="@color/colorWhite"
+                        android:src="@drawable/ic_brightness" />
+
+                    <ImageButton
+                        android:id="@+id/contrast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/margin_right_button"
+                        android:background="@color/colorWhite"
+                        android:src="@drawable/ic_contrast" />
+
+                    <ImageButton
+                        android:id="@+id/blurring"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/margin_right_button"
+                        android:background="@color/colorWhite"
+                        android:src="@drawable/ic_blur" />
+
+                    <Button
+                        android:id="@+id/saturation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginRight="@dimen/margin_right_button"
+                        android:text="saturation" />
+
+                    <Button
+                        android:id="@+id/hue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hue" />
+
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </HorizontalScrollView>
 
-
-            <LinearLayout
-                android:id="@+id/filtersLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <HorizontalScrollView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageButton
-                            android:id="@+id/brightness"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="10dp"
-                            android:background="@color/colorWhite"
-                            android:src="@drawable/ic_brightness" />
-
-                        <ImageButton
-                            android:id="@+id/contrast"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="10dp"
-                            android:background="@color/colorWhite"
-                            android:src="@drawable/ic_contrast" />
-
-                        <ImageButton
-                            android:id="@+id/blurring"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="10dp"
-                            android:background="@color/colorWhite"
-                            android:src="@drawable/ic_blur" />
-
-                        <Button
-                            android:id="@+id/saturation"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="saturation" />
-
-                        <Button
-                            android:id="@+id/hue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hue" />
-
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
-
-            </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
