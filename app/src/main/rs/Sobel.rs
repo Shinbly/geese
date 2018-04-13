@@ -34,9 +34,6 @@ unsigned int RS_KERNEL sobel(unsigned int in, uint32_t x, uint32_t y) {
 
 
 
-                //R = fmax(fabs(R), fabs(R2));
-
-
 
             }
         }

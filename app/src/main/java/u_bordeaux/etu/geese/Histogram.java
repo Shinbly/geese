@@ -189,6 +189,7 @@ public class Histogram {
         for (int i = 0; i < 256; i++) {
             counter += histo[i];
             Lut[i] = counter/idealnb;
+            Lut[i] = Math.max(0,(Math.min(255,Lut[i])));
         }
 
         applyLut(img, Lut);

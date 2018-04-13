@@ -2,6 +2,7 @@ package u_bordeaux.etu.geese;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TableLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,34 +42,36 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
      * All the buttons of the fragment plus the seekbar
      */
     @BindView(R.id.brightness)
-    private ImageButton brightness;
+    ImageButton brightness;
 
     @BindView(R.id.contrast)
-    private ImageButton contrast;
+    ImageButton contrast;
 
     @BindView(R.id.blurring)
-    private ImageButton blur;
+    ImageButton blur;
 
     @BindView(R.id.hue)
-    private Button hue;
+    ImageButton hue;
 
     @BindView(R.id.saturation)
-    private Button saturation;
+    ImageButton saturation;
 
     @BindView(R.id.seekBarEdit)
-    private SeekBar seekBarControl;
+    SeekBar seekBarControl;
 
     @BindView(R.id.cancel)
-    private Button cancel;
+    Button cancel;
 
     @BindView(R.id.validate)
-    private Button validate;
+    Button validate;
 
     @BindView(R.id.seekBarLayout)
-    private LinearLayout seekBarLayout;
+    RelativeLayout seekBarLayout;
 
     @BindView(R.id.filtersLayout)
-    private LinearLayout filtersLayout;
+    LinearLayout filtersLayout;
+
+    TabLayout tabLayout;
 
 
     /**
@@ -111,6 +116,8 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
     @Override
     public void onClick(View v) {
+        EditingActivity activity = (EditingActivity) getActivity();
+        tabLayout = activity.getTabLayout();
         if (this.listener != null) {
 
             switch (v.getId()){
@@ -163,10 +170,12 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
                 seekBarLayout.setVisibility(View.INVISIBLE);
                 filtersLayout.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.VISIBLE);
 
             }else{
                 seekBarLayout.setVisibility(View.VISIBLE);
                 filtersLayout.setVisibility(View.INVISIBLE);
+                tabLayout.setVisibility(View.INVISIBLE);
             }
 
             seekBarControl.setOnSeekBarChangeListener(this);

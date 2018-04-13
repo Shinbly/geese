@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerVertical="true"
+    android:id="@+id/layout_edit_fragment"
     android:background="@color/colorWhite">
 
 
@@ -23,7 +24,7 @@
                 android:id="@+id/seekBarEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginBottom="20dp"/>
 
 
@@ -35,7 +36,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/seekBarEdit"
                     android:elevation="0dp"
-                    android:layout_marginLeft="10dp"
+                    android:paddingLeft="15dp"
+                    style="?android:attr/borderlessButtonStyle"
                     android:text="Validate" />
 
                 <Button
@@ -46,7 +48,8 @@
                     android:background="@color/colorWhite"
                     android:layout_below="@+id/seekBarEdit"
                     android:elevation="0dp"
-                    android:layout_marginRight="10dp"
+                    android:paddingRight="15dp"
+                    style="?android:attr/borderlessButtonStyle"
                     android:text="Cancel" />
 
         </RelativeLayout>
@@ -75,6 +78,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/margin_right_button"
+                        android:layout_marginLeft="@dimen/margin_right_button"
                         android:background="@color/colorWhite"
                         android:src="@drawable/ic_brightness" />
 
@@ -94,19 +98,21 @@
                         android:background="@color/colorWhite"
                         android:src="@drawable/ic_blur" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/saturation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginRight="@dimen/margin_right_button"
-                        android:text="saturation" />
+                        android:background="@color/colorWhite"
+                        android:src="@drawable/ic_saturation"/>
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/hue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hue" />
+                        android:layout_marginRight="@dimen/margin_right_button"
+                        android:background="@color/colorWhite"
+                        android:src="@drawable/ic_hue"/>
 
 
                 </LinearLayout>

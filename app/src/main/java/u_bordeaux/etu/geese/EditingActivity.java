@@ -50,7 +50,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     private Bitmap bmp;
     Image img;
     Image preview;
-    Image thumbnail;
 
     private Uri pathImg;
 
@@ -66,16 +65,18 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
     ViewPagerAdapter adapter;
 
-    public static Context context;
+    public Context context;
 
 
     public Uri getPathImg(){
         return pathImg;
     }
 
-    public static Context getContext(){
+    public Context getContext(){
         return context;
     }
+
+    public TabLayout getTabLayout(){return tabLayout;}
 
     private String save(Bitmap bmp, String img_name){
         String root = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DCIM + "/geese";
@@ -223,6 +224,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     @Override
     public void onPreviewStart() {
         preview = new Image(img.getPreview(imageView.getWidth(),imageView.getHeight()));
+        imageView.setImageBitmap(preview.getBmp());
     }
 
     @Override
@@ -302,13 +304,13 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 case "linearExtention" :
                     Histogram.linearExtension(img);
                     break;
-                case "negatif" :
-                    Filters.negatif(img);
+                case "negative" :
+                    Filters.negative(img);
                     break;
                 case "sobel" :
                     Convolution.sobelRS(img,context);
                     break;
-                case "Laplacien" :
+                case "laplacien" :
                     Convolution.laplacien(img,context);
                     break;
                 case "cancel":

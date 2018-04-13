@@ -1,5 +1,9 @@
 package u_bordeaux.etu.geese;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,6 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,26 +35,25 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
      * All the buttons of the fragment plus the seekbar
      */
     @BindView(R.id.gray)
-    private Button gray;
+    ImageButton gray;
 
     @BindView(R.id.sepia)
-    private Button sepia;
+    ImageButton sepia;
 
     @BindView(R.id.egalization)
-    private Button egalization;
+    ImageButton egalization;
 
     @BindView(R.id.linearExtention)
-    private Button linearExtention;
+    ImageButton linearExtention;
 
     @BindView(R.id.negatif)
-    private Button negatif;
+    ImageButton negatif;
 
     @BindView(R.id.sobel)
-    private Button sobel;
+    ImageButton sobel;
 
     @BindView(R.id.laplacien)
-    private Button laplacien;
-
+    ImageButton laplacien;
     /**
      * The tag to know which button had been pressed
      * The tag is pass to the activity with the interface FragmentFiltersListener
@@ -75,6 +83,78 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         negatif.setOnClickListener(this);
         laplacien.setOnClickListener(this);
         sobel.setOnClickListener(this);
+
+
+        EditingActivity activity = (EditingActivity) getActivity();
+        Uri pathImg = activity.getPathImg();
+
+        Context applicationContext = activity.getApplicationContext();
+
+        Bitmap bmp;
+        Image img = null;
+
+        try{
+            final InputStream stream = applicationContext.getContentResolver().openInputStream(pathImg);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = true;
+            options.inMutable = true;
+            bmp = BitmapFactory.decodeStream(stream, null, options);
+
+            Bitmap croppedBitmap;
+
+            int diff = bmp.getWidth() - bmp.getHeight();
+            if(diff < 0){
+                croppedBitmap = Bitmap.createBitmap(bmp,0,Math.abs(diff)/2, bmp.getWidth(),bmp.getHeight()-Math.abs(diff)/2);
+            }else{
+                croppedBitmap = Bitmap.createBitmap(bmp,Math.abs(diff)/2,0, bmp.getWidth()-Math.abs(diff)/2,bmp.getHeight());
+            }
+
+            bmp.recycle();
+
+            img = new Image(Bitmap.createScaledBitmap(croppedBitmap,200,200,false));
+
+        }catch (FileNotFoundException e){
+
+        }
+
+        if(img != null){
+
+            Bitmap bmpSepia = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpNegatif = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpEqualization = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpLinearExtension = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpSobel = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpLaplacien = img.getBmp().copy(img.getBmp().getConfig(),true);
+
+
+            Filters.toGray(img);
+            gray.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpSepia);
+            Filters.sepia(img);
+            sepia.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpNegatif);
+            Filters.negative(img);
+            negatif.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpEqualization);
+            Histogram.equalization(img);
+            egalization.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpLinearExtension);
+            Histogram.linearExtension(img);
+            linearExtention.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpSobel);
+            Convolution.sobelRS(img, applicationContext);
+            sobel.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpLaplacien);
+            Convolution.laplacien(img,applicationContext);
+            laplacien.setImageBitmap(img.getBmp());
+        }
+
 
         return view;
     }

@@ -10,16 +10,16 @@ int imgHeight;
 
 
 unsigned int RS_KERNEL convolution(unsigned int in, uint32_t x, uint32_t y) {
-    unsigned int out;
+    unsigned int out = in;
     double coeff;
     int side = fSize/2;
     float R = 0;
     float G = 0;
     float B = 0;
     float div = 0.0f;
-    for (int i = -side; i <= side; i++) {
-        for (int j = -side; j <= side; j++) {
-            if (x >= side && (x+side)<=imgWidth && y >= side && (y +side) <= imgHeight){
+    if (x >= side && (x+side)<=imgWidth && y >= side && (y +side) <= imgHeight){
+        for (int i = -side; i <= side; i++) {
+            for (int j = -side; j <= side; j++) {
                 coeff = filter[((j+side)*fSize)+i+side];
                 out = rsGetElementAt_uint(picture, x+i, y+j);
                 R += ((out >> 16) & 0xff)*coeff;
@@ -28,8 +28,8 @@ unsigned int RS_KERNEL convolution(unsigned int in, uint32_t x, uint32_t y) {
                 div += coeff;
             }
         }
+        if (div == 0){div += 1;}
+        out = ((int)(R/div) & 0xff) << 16 | ((int)(G/div) & 0xff) << 8 | ((int)(B/div) & 0xff);
     }
-    if (div == 0){div = 1;}
-    out = ((int)(R/div) & 0xff) << 16 | ((int)(G/div) & 0xff) << 8 | ((int)(B/div) & 0xff);
     return out;
 }

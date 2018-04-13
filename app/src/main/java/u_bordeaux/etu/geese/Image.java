@@ -55,15 +55,15 @@ public class Image {
     }
 
 
-    /**
-     * Getter for the width of the image
-     * @return the width of the bitmap
-     */
-    public int getWidth() {
+
     public Bitmap getThumbnail(int width, int height) {
         return Bitmap.createScaledBitmap(bmp, width, height,false);
     }
 
+    /**
+     * Getter for the width of the image
+     * @return the width of the bitmap
+     */
     public int getWidth(){
         return bmp.getWidth();
     }
