@@ -117,6 +117,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
         }
 
+        //The filters thumbnails
         if(img != null){
 
             Bitmap bmpSepia = img.getBmp().copy(img.getBmp().getConfig(),true);

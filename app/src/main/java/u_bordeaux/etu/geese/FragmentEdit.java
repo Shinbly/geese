@@ -168,6 +168,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
             if (v.getId() == R.id.cancel || v.getId() == R.id.validate) {
 
+                //Hide the seekbar and show the tabLayout and the filters
                 seekBarLayout.setVisibility(View.INVISIBLE);
                 filtersLayout.setVisibility(View.VISIBLE);
                 tabLayout.setVisibility(View.VISIBLE);

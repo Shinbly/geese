@@ -54,7 +54,7 @@ public class Convolution {
 
 
     /**
-     *
+     * Method convolutionRs
      * @param img
      * @param pixels
      * @param mask

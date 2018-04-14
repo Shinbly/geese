@@ -10,6 +10,10 @@ import android.widget.Scroller;
 import java.lang.reflect.Field;
 
 
+/**
+ * Class NonSwipeableViewPager
+ */
+
 public class NonSwipeableViewPager extends ViewPager {
 
     public NonSwipeableViewPager(Context context) {

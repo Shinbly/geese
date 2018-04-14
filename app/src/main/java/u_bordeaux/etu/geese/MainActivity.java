@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     String mCurrentPhotoPath;
 
+    //The context of the application
     Context context;
 
     protected void onActivityResult(int reqCode, int resultCode, Intent data){

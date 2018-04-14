@@ -4,7 +4,7 @@ import android.graphics.Color;
 
 
 /**
- * Class Histogram, represents the histogram of an image
+ * Class Histogram, represents the histogram of an image and some methods applicable on it
  */
 
 public class Histogram {

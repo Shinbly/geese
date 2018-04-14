@@ -151,6 +151,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         context = getApplicationContext();
 
 
+        //On recupere l'image depuis la premiere activite
         Intent intent = getIntent();
         pathImg = (Uri) intent.getParcelableExtra("pathBitmap");
         try{

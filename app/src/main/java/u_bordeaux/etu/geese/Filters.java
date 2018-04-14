@@ -6,7 +6,7 @@ import android.support.v8.renderscript.*;
 
 
 /**
- * Class Filters, implements all the filters that can be apply on an image
+ * Class Filters, implements all the filters which can be apply on an image
  */
 
 public class Filters {
@@ -228,7 +228,6 @@ public class Filters {
         sat.forEach_Saturation(dataIn, dataOut);
 
         dataOut.copy2DRangeTo(0, 0, width,height,pixels);
-
 
 
         img.setPixels(pixels);

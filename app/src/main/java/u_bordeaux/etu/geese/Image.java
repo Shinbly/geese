@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.net.Uri;
 
 /**
- * Class Image, represents the image on which all the modifications will be apply
+ * Class Image, represents the editing image on which all the modifications will be apply
  */
 
 public class Image {

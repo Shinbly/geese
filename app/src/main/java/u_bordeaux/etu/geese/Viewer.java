@@ -7,7 +7,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 /**
- * Created by Lalie on 06/02/2018.
+ * Class Viewer
  */
 
 class Viewer extends AppCompatImageView {
