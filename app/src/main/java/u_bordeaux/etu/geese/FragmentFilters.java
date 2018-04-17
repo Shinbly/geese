@@ -104,9 +104,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
             int diff = bmp.getWidth() - bmp.getHeight();
             if(diff < 0){
-                croppedBitmap = Bitmap.createBitmap(bmp,0,Math.abs(diff)/2, bmp.getWidth(),bmp.getHeight()-Math.abs(diff)/2);
+                croppedBitmap = Bitmap.createBitmap(bmp,0,Math.abs(diff)/2, bmp.getWidth(),bmp.getHeight()-Math.abs(diff));
             }else{
-                croppedBitmap = Bitmap.createBitmap(bmp,Math.abs(diff)/2,0, bmp.getWidth()-Math.abs(diff)/2,bmp.getHeight());
+                croppedBitmap = Bitmap.createBitmap(bmp,Math.abs(diff)/2,0, bmp.getWidth()-Math.abs(diff),bmp.getHeight());
             }
 
             bmp.recycle();

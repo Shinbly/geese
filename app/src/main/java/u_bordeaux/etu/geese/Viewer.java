@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 
 /**
  * Class Viewer
@@ -48,10 +49,4 @@ class Viewer extends AppCompatImageView {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
     }
-
-    public void zoomIn(){}
-
-    public void zoomOut(){}
-
-    public void scroll(){}
 }
