@@ -28,7 +28,7 @@
         android:id="@+id/appbarid"
         app:elevation="0dp">
 
-        <ImageView
+        <u_bordeaux.etu.geese.Viewer
             android:id="@+id/imageViewEditid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
