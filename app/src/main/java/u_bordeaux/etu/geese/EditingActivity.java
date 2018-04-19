@@ -168,7 +168,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         }catch (FileNotFoundException e){
 
         }
-        SGD = new ScaleGestureDetector(this, new ScaleListener());
 
 
         Bundle bundle = new Bundle();
@@ -247,23 +246,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         }
 
 
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        SGD.onTouchEvent(event);
-        return true;
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            scale = imageView.getScaleX() * detector.getScaleFactor();
-            imageView.setScaleX(scale);
-            imageView.setScaleY(scale);
-            imageView.invalidate();
-            return true;
-        }
     }
 
     private class taskFilters extends AsyncTask{
