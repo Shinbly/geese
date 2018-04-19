@@ -29,8 +29,6 @@ import android.widget.Scroller;
  */
 public class Viewer extends AppCompatImageView {
 
-    private static final String DEBUG = "DEBUG";
-
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
     // when the image is stretched to fit view.
@@ -44,9 +42,8 @@ public class Viewer extends AppCompatImageView {
     //
     private Matrix matrix, prevMatrix;
 
-    private static enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM}
+    private static enum State {NONE, DRAG, ZOOM, ANIMATE_ZOOM};
 
-    ;
     private State state;
 
     private float minScale;
@@ -57,10 +54,7 @@ public class Viewer extends AppCompatImageView {
 
     private ScaleType mScaleType;
 
-    private boolean imageRenderedAtLeastOnce;
     private boolean onDrawReady;
-
-    private ZoomVariables delayedZoomVariables;
 
     //
     // Size of view and previous view size (ie before rotation)
@@ -119,62 +113,6 @@ public class Viewer extends AppCompatImageView {
         userTouchListener = l;
     }
 
-    public void setOnViewerListener(OnViewerListener l) {
-        ViewerListener = l;
-    }
-
-    public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
-        doubleTapListener = l;
-    }
-
-    @Override
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
-        fitImageToView();
-    }
-
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        fitImageToView();
-    }
-
-    @Override
-    public void setImageDrawable(Drawable drawable) {
-        super.setImageDrawable(drawable);
-        fitImageToView();
-    }
-
-    @Override
-    public void setImageURI(Uri uri) {
-        super.setImageURI(uri);
-        fitImageToView();
-    }
-
-    @Override
-    public void setScaleType(ScaleType type) {
-        if (type == ScaleType.FIT_START || type == ScaleType.FIT_END) {
-            throw new UnsupportedOperationException("Viewer does not support FIT_START or FIT_END");
-        }
-        if (type == ScaleType.MATRIX) {
-            super.setScaleType(ScaleType.MATRIX);
-
-        } else {
-            mScaleType = type;
-            if (onDrawReady) {
-                //
-                // If the image is already rendered, scaleType has been called programmatically
-                // and the Viewer should be updated with the new scaleType.
-                //
-                setZoom(this);
-            }
-        }
-    }
-
-    @Override
-    public ScaleType getScaleType() {
-        return mScaleType;
-    }
 
     /**
      * Returns false if image is in initial, unzoomed state. False, otherwise.
@@ -185,22 +123,6 @@ public class Viewer extends AppCompatImageView {
         return normalizedScale != 1;
     }
 
-    /**
-     * Return a Rect representing the zoomed image.
-     *
-     * @return rect representing zoomed image
-     */
-    public RectF getZoomedRect() {
-        if (mScaleType == ScaleType.FIT_XY) {
-            throw new UnsupportedOperationException("getZoomedRect() not supported with FIT_XY");
-        }
-        PointF topLeft = transformCoordTouchToBitmap(0, 0, true);
-        PointF bottomRight = transformCoordTouchToBitmap(viewWidth, viewHeight, true);
-
-        float w = getDrawable().getIntrinsicWidth();
-        float h = getDrawable().getIntrinsicHeight();
-        return new RectF(topLeft.x / w, topLeft.y / h, bottomRight.x / w, bottomRight.y / h);
-    }
 
     /**
      * Save the current matrix and view dimensions
@@ -228,7 +150,6 @@ public class Viewer extends AppCompatImageView {
         bundle.putInt("viewHeight", viewHeight);
         matrix.getValues(m);
         bundle.putFloatArray("matrix", m);
-        bundle.putBoolean("imageRendered", imageRenderedAtLeastOnce);
         return bundle;
     }
 
@@ -238,169 +159,8 @@ public class Viewer extends AppCompatImageView {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
-
-    /**
-     * Get the max zoom multiplier.
-     *
-     * @return max zoom multiplier.
-     */
-    public float getMaxZoom() {
-        return maxScale;
-    }
-
-    /**
-     * Set the max zoom multiplier. Default value: 5.
-     *
-     * @param max max zoom multiplier.
-     */
-    public void setMaxZoom(float max) {
-        maxScale = max;
-    }
-
-    /**
-     * Get the min zoom multiplier.
-     *
-     * @return min zoom multiplier.
-     */
-    public float getMinZoom() {
-        return minScale;
-    }
-
-    /**
-     * Get the current zoom. This is the zoom relative to the initial
-     * scale, not the original resource.
-     *
-     * @return current zoom multiplier.
-     */
-    public float getCurrentZoom() {
-        return normalizedScale;
-    }
-
-    /**
-     * Set the min zoom multiplier. Default value: 1.
-     *
-     * @param min min zoom multiplier.
-     */
-    public void setMinZoom(float min) {
-        minScale = min;
-    }
-
-    /**
-     * Reset zoom and translation to initial state.
-     */
-    public void resetZoom() {
-        normalizedScale = 1;
-        fitImageToView();
-    }
-
-    /**
-     * Set zoom to the specified scale. Image will be centered by default.
-     *
-     * @param scale
-     */
-    public void setZoom(float scale) {
-        setZoom(scale, 0.5f, 0.5f);
-    }
-
-    /**
-     * Set zoom to the specified scale. Image will be centered around the point
-     * (focusX, focusY). These floats range from 0 to 1 and denote the focus point
-     * as a fraction from the left and top of the view. For example, the top left
-     * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
-     *
-     * @param scale
-     * @param focusX
-     * @param focusY
-     */
-    public void setZoom(float scale, float focusX, float focusY) {
-        setZoom(scale, focusX, focusY, mScaleType);
-    }
-
-    /**
-     * Set zoom to the specified scale. Image will be centered around the point
-     * (focusX, focusY). These floats range from 0 to 1 and denote the focus point
-     * as a fraction from the left and top of the view. For example, the top left
-     * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
-     *
-     * @param scale
-     * @param focusX
-     * @param focusY
-     * @param scaleType
-     */
-    public void setZoom(float scale, float focusX, float focusY, ScaleType scaleType) {
-        //
-        // setZoom can be called before the image is on the screen, but at this point,
-        // image and view sizes have not yet been calculated in onMeasure. Thus, we should
-        // delay calling setZoom until the view has been measured.
-        //
-        if (!onDrawReady) {
-            delayedZoomVariables = new ZoomVariables(scale, focusX, focusY, scaleType);
-            return;
-        }
-
-        if (scaleType != mScaleType) {
-            setScaleType(scaleType);
-        }
-        resetZoom();
-        scaleImage(scale, viewWidth / 2, viewHeight / 2, true);
-        matrix.getValues(m);
-        m[Matrix.MTRANS_X] = -((focusX * getImageWidth()) - (viewWidth * 0.5f));
-        m[Matrix.MTRANS_Y] = -((focusY * getImageHeight()) - (viewHeight * 0.5f));
-        matrix.setValues(m);
-        fixTrans();
-        setImageMatrix(matrix);
-    }
-
-    /**
-     * Set zoom parameters equal to another Viewer. Including scale, position,
-     * and ScaleType.
-     *
-     * @param
-     */
-    public void setZoom(Viewer img) {
-        PointF center = img.getScrollPosition();
-        setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
-    }
-
-    /**
-     * Return the point at the center of the zoomed image. The PointF coordinates range
-     * in value between 0 and 1 and the focus point is denoted as a fraction from the left
-     * and top of the view. For example, the top left corner of the image would be (0, 0).
-     * And the bottom right corner would be (1, 1).
-     *
-     * @return PointF representing the scroll position of the zoomed image.
-     */
-    public PointF getScrollPosition() {
-        Drawable drawable = getDrawable();
-        if (drawable == null) {
-            return null;
-        }
-        int drawableWidth = drawable.getIntrinsicWidth();
-        int drawableHeight = drawable.getIntrinsicHeight();
-
-        PointF point = transformCoordTouchToBitmap(viewWidth / 2, viewHeight / 2, true);
-        point.x /= drawableWidth;
-        point.y /= drawableHeight;
-        return point;
-    }
-
-    /**
-     * Set the focus point of the zoomed image. The focus points are denoted as a fraction from the
-     * left and top of the view. The focus points can range in value between 0 and 1.
-     *
-     * @param focusX
-     * @param focusY
-     */
-    public void setScrollPosition(float focusX, float focusY) {
-        setZoom(normalizedScale, focusX, focusY);
     }
 
     /**
@@ -559,7 +319,7 @@ public class Viewer extends AppCompatImageView {
         float redundantYSpace = viewHeight - (scaleY * drawableHeight);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
-        if (!isZoomed() && !imageRenderedAtLeastOnce) {
+        if (!isZoomed()) {
             //
             // Stretch and center image to fit view
             //
@@ -684,10 +444,6 @@ public class Viewer extends AppCompatImageView {
         this.state = state;
     }
 
-    public boolean canScrollHorizontallyFroyo(int direction) {
-        return canScrollHorizontally(direction);
-    }
-
     @Override
     public boolean canScrollHorizontally(int direction) {
         matrix.getValues(m);
@@ -713,24 +469,6 @@ public class Viewer extends AppCompatImageView {
      * @author Ortiz
      */
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (doubleTapListener != null) {
-                return doubleTapListener.onSingleTapConfirmed(e);
-            }
-            return performClick();
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-            performLongClick();
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
@@ -779,7 +517,7 @@ public class Viewer extends AppCompatImageView {
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
 
-            if (state == State.NONE || state == State.DRAG || state == State.FLING) {
+            if (state == State.NONE || state == State.DRAG) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         last.set(curr);
@@ -857,20 +595,12 @@ public class Viewer extends AppCompatImageView {
         public void onScaleEnd(ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
             setState(State.NONE);
-            boolean animateToZoomBoundary = false;
             float targetZoom = normalizedScale;
             if (normalizedScale > maxScale) {
                 targetZoom = maxScale;
-                animateToZoomBoundary = true;
 
             } else if (normalizedScale < minScale) {
                 targetZoom = minScale;
-                animateToZoomBoundary = true;
-            }
-
-            if (animateToZoomBoundary) {
-                DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, viewWidth / 2, viewHeight / 2, true);
-                compatPostOnAnimation(doubleTap);
             }
         }
     }
@@ -1051,154 +781,6 @@ public class Viewer extends AppCompatImageView {
         return new PointF(finalX, finalY);
     }
 
-    /**
-     * Fling launches sequential runnables which apply
-     * the fling graphic to the image. The values for the translation
-     * are interpolated by the Scroller.
-     *
-     * @author Ortiz
-     */
-    private class Fling implements Runnable {
-
-        CompatScroller scroller;
-        int currX, currY;
-
-        Fling(int velocityX, int velocityY) {
-            setState(State.FLING);
-            scroller = new CompatScroller(context);
-            matrix.getValues(m);
-
-            int startX = (int) m[Matrix.MTRANS_X];
-            int startY = (int) m[Matrix.MTRANS_Y];
-            int minX, maxX, minY, maxY;
-
-            if (getImageWidth() > viewWidth) {
-                minX = viewWidth - (int) getImageWidth();
-                maxX = 0;
-
-            } else {
-                minX = maxX = startX;
-            }
-
-            if (getImageHeight() > viewHeight) {
-                minY = viewHeight - (int) getImageHeight();
-                maxY = 0;
-
-            } else {
-                minY = maxY = startY;
-            }
-
-            scroller.fling(startX, startY, (int) velocityX, (int) velocityY, minX,
-                    maxX, minY, maxY);
-            currX = startX;
-            currY = startY;
-        }
-
-        public void cancelFling() {
-            if (scroller != null) {
-                setState(State.NONE);
-                scroller.forceFinished(true);
-            }
-        }
-
-        @Override
-        public void run() {
-
-            //
-            // OnViewerListener is set: Viewer listener has been flung by user.
-            // Listener runnable updated with each frame of fling animation.
-            //
-            if (ViewerListener != null) {
-                ViewerListener.onMove();
-            }
-
-            if (scroller.isFinished()) {
-                scroller = null;
-                return;
-            }
-
-            if (scroller.computeScrollOffset()) {
-                int newX = scroller.getCurrX();
-                int newY = scroller.getCurrY();
-                int transX = newX - currX;
-                int transY = newY - currY;
-                currX = newX;
-                currY = newY;
-                matrix.postTranslate(transX, transY);
-                fixTrans();
-                setImageMatrix(matrix);
-                compatPostOnAnimation(this);
-            }
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    private class CompatScroller {
-        Scroller scroller;
-        OverScroller overScroller;
-        boolean isPreGingerbread;
-
-        public CompatScroller(Context context) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                isPreGingerbread = true;
-                scroller = new Scroller(context);
-
-            } else {
-                isPreGingerbread = false;
-                overScroller = new OverScroller(context);
-            }
-        }
-
-        public void fling(int startX, int startY, int velocityX, int velocityY, int minX, int maxX, int minY, int maxY) {
-            if (isPreGingerbread) {
-                scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
-            } else {
-                overScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
-            }
-        }
-
-        public void forceFinished(boolean finished) {
-            if (isPreGingerbread) {
-                scroller.forceFinished(finished);
-            } else {
-                overScroller.forceFinished(finished);
-            }
-        }
-
-        public boolean isFinished() {
-            if (isPreGingerbread) {
-                return scroller.isFinished();
-            } else {
-                return overScroller.isFinished();
-            }
-        }
-
-        public boolean computeScrollOffset() {
-            if (isPreGingerbread) {
-                return scroller.computeScrollOffset();
-            } else {
-                overScroller.computeScrollOffset();
-                return overScroller.computeScrollOffset();
-            }
-        }
-
-        public int getCurrX() {
-            if (isPreGingerbread) {
-                return scroller.getCurrX();
-            } else {
-                return overScroller.getCurrX();
-            }
-        }
-
-        public int getCurrY() {
-            if (isPreGingerbread) {
-                return scroller.getCurrY();
-            } else {
-                return overScroller.getCurrY();
-            }
-        }
-    }
-
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void compatPostOnAnimation(Runnable runnable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -1207,25 +789,5 @@ public class Viewer extends AppCompatImageView {
         } else {
             postDelayed(runnable, 1000 / 60);
         }
-    }
-
-    private class ZoomVariables {
-        public float scale;
-        public float focusX;
-        public float focusY;
-        public ScaleType scaleType;
-
-        public ZoomVariables(float scale, float focusX, float focusY, ScaleType scaleType) {
-            this.scale = scale;
-            this.focusX = focusX;
-            this.focusY = focusY;
-            this.scaleType = scaleType;
-        }
-    }
-
-    private void printMatrixInfo() {
-        float[] n = new float[9];
-        matrix.getValues(n);
-        Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
     }
 }
