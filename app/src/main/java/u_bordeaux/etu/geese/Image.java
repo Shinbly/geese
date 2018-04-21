@@ -24,6 +24,8 @@ public class Image {
      */
     private int[] backup;
 
+    //private static int nbPixelsAllow = 1920*1080;
+
 
 
 
@@ -35,6 +37,15 @@ public class Image {
      */
     public Image(Bitmap bmp) {
         this.bmp = bmp;
+
+        /*int nbPixelsOrig = bmp.getHeight()*bmp.getWidth();
+
+        float ratioSize = nbPixelsOrig/nbPixelsAllow;
+
+        if(nbPixelsAllow < nbPixelsOrig){
+            bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()/Math.sqrt(ratioSize)),(int)(bmp.getHeight()/Math.sqrt(ratioSize)),true);
+        }*/
+
         this.backup = new int[bmp.getHeight()*bmp.getWidth()];
         bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }

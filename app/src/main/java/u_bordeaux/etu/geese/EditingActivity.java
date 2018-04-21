@@ -46,18 +46,13 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     private boolean working;
 
 
-    private ImageView imageView;
+    private Viewer imageView;
 
     private Bitmap bmp;
     Image img;
     Image preview;
 
     private Uri pathImg;
-
-
-    Float scale = 1f;
-    ScaleGestureDetector SGD;
-
 
     private int cptImage =0;
 
@@ -144,7 +139,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
         viewPager = (ViewPager) findViewById(R.id.viewpagerid);
 
-        imageView = (ImageView) findViewById(R.id.imageViewEditid);
+        imageView = (Viewer) findViewById(R.id.imageViewEditid);
 
 
         setupViewPager(viewPager);
@@ -157,13 +152,14 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         pathImg = (Uri) intent.getParcelableExtra("pathBitmap");
         try{
             final InputStream stream = getContentResolver().openInputStream(pathImg);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = true;
-            options.inMutable = true;
-            bmp = BitmapFactory.decodeStream(stream, null, options);
-            img = new Image(bmp);
+            final InputStream streamS = getContentResolver().openInputStream(pathImg);
+
+            bmp = decodeSampledBitmapFromStream(stream, streamS);
+            Log.i("bmp", "onCreate: bmp: "+bmp);
 
             imageView.setImageBitmap(bmp);
+            img = new Image(bmp);
+
 
         }catch (FileNotFoundException e){
 
@@ -172,6 +168,55 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("bmp",pathImg);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public Bitmap decodeSampledBitmapFromStream(InputStream stream, InputStream streamS) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(stream,null,options);
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+
+        int nbPixelsOrig = imageHeight*imageWidth;
+        int nbPixelsAllow = 1920*1080;
+
+        float ratioSize = nbPixelsOrig/nbPixelsAllow;
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, (int)(imageWidth/Math.sqrt(ratioSize)), (int)(imageHeight/Math.sqrt(ratioSize)));
+
+        // Decode bitmap with inSampleSize set
+
+        options.inJustDecodeBounds = false;
+        options.inScaled = true;
+        options.inMutable = true;
+
+        Bitmap bmp = BitmapFactory.decodeStream(streamS,null,options);
+        return bmp;
     }
 
     @Override
@@ -296,6 +341,9 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     break;
                 case "laplacien" :
                     Convolution.laplacien(img,context);
+                    break;
+                case "sketch" :
+                    Filters.sketch(img,context);
                     break;
                 case "cancel":
                     break;

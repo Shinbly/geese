@@ -232,4 +232,17 @@ public class Filters {
 
         img.setPixels(pixels);
     }
+
+
+    /**
+     * Method sketch
+     * Apply a sketch effect to the image, like it's a drawing.
+     * @param img the image on which the filter will be apply
+     * @param context the context of the application
+     */
+    public static void sketch(Image img, Context context) {
+        Convolution.sobelRS(img,context);
+        negative(img);
+        //Convolution.gaussien(img,7,context);
+    }
 }

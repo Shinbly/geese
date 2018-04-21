@@ -3,6 +3,7 @@ package u_bordeaux.etu.geese;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v8.renderscript.*;
+import android.util.Log;
 
 
 /**
@@ -85,8 +86,6 @@ public class Convolution {
         convo.forEach_convolution(dataIn,dataOut);
 
         dataOut.copy2DRangeTo(0,0,width,height,pixels);
-
-
     }
 
 
@@ -115,27 +114,20 @@ public class Convolution {
      * @param context
      */
     public static void gaussien(Image img, int size_mask,Context context) {
-        double mask[]= new double[size_mask*size_mask];
-        double coeff = 0;
-        double sigma= 1+size_mask/4;
-        int rayon = size_mask/2;
+        int size= 3;
+        double mask[]= new double[size*size];
+        double sigma= 1+size_mask;
+        int rayon = 1; // test
+        double pos = 1;
         for (int y = -rayon; y<= rayon;y++){
             for(int x= -rayon ; x <= rayon ;x++){
-                mask[(x+rayon)+(y+rayon)*size_mask]=(Math.exp(-((x*x+y*y)/(2*(sigma*sigma))))) ;
+                pos= (Math.exp(-((x*x+y*y)/(2*(sigma*sigma)))));
+                mask[(x+rayon)+(y+rayon)*size]= pos ;
             }
-        }
-        coeff = (Math.exp(-((rayon*rayon*2)/(2*sigma*sigma))));
-        for (int i = 0 ; i < size_mask*size_mask;i++){
-            mask[i]/= coeff;
         }
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
-        if (context != null) {
-            convolutionRS(img,pixels,mask,context);
-        }
-        else {
-            convolution(img, pixels, mask);
-        }
+        convolutionRS(img,pixels,mask,context);
         img.setPixels(pixels);
     }
 

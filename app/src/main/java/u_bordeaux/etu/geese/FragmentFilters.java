@@ -54,6 +54,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
     @BindView(R.id.laplacien)
     ImageButton laplacien;
+
+    @BindView(R.id.sketch)
+    ImageButton sketch;
     /**
      * The tag to know which button had been pressed
      * The tag is pass to the activity with the interface FragmentFiltersListener
@@ -83,6 +86,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         negatif.setOnClickListener(this);
         laplacien.setOnClickListener(this);
         sobel.setOnClickListener(this);
+        sketch.setOnClickListener(this);
 
 
         EditingActivity activity = (EditingActivity) getActivity();
@@ -95,10 +99,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
         try{
             final InputStream stream = applicationContext.getContentResolver().openInputStream(pathImg);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = true;
-            options.inMutable = true;
-            bmp = BitmapFactory.decodeStream(stream, null, options);
+            final InputStream streamS = applicationContext.getContentResolver().openInputStream(pathImg);
+
+            bmp = decodeSampledBitmapFromStream(stream,streamS);
 
             Bitmap croppedBitmap;
 
@@ -108,8 +111,6 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             }else{
                 croppedBitmap = Bitmap.createBitmap(bmp,Math.abs(diff)/2,0, bmp.getWidth()-Math.abs(diff),bmp.getHeight());
             }
-
-            bmp.recycle();
 
             img = new Image(Bitmap.createScaledBitmap(croppedBitmap,200,200,false));
 
@@ -126,6 +127,8 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             Bitmap bmpLinearExtension = img.getBmp().copy(img.getBmp().getConfig(),true);
             Bitmap bmpSobel = img.getBmp().copy(img.getBmp().getConfig(),true);
             Bitmap bmpLaplacien = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpSketch = img.getBmp().copy(img.getBmp().getConfig(),true);
+
 
 
             Filters.toGray(img);
@@ -154,10 +157,55 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             img.setBmp(bmpLaplacien);
             Convolution.laplacien(img,applicationContext);
             laplacien.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpSketch);
+            Filters.sketch(img,applicationContext);
+            sketch.setImageBitmap(img.getBmp());
         }
 
 
         return view;
+    }
+
+    public Bitmap decodeSampledBitmapFromStream(InputStream stream, InputStream streamS) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(stream,null,options);
+
+        options.inSampleSize = calculateInSampleSize(options,200,200);
+
+        // Decode bitmap with inSampleSize set
+
+        options.inJustDecodeBounds = false;
+        options.inScaled = true;
+        options.inMutable = true;
+
+        Bitmap bmp = BitmapFactory.decodeStream(streamS,null,options);
+        return bmp;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
 
@@ -192,6 +240,10 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
                 case  R.id.sobel :
                     Tag = "sobel";
+                    break;
+
+                case  R.id.sketch :
+                    Tag = "sketch";
                     break;
             }
 
