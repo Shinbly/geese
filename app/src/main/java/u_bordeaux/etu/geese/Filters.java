@@ -107,6 +107,40 @@ public class Filters {
 
 
     /**
+     * Method colorization
+     * Set the hue of each pixels of the image given in parameter
+     * @param img the image to set the hue
+     * @param value the value to set to the current hue
+     * @param mainContext
+     */
+    public static void Colorization (Image img, int value, Context mainContext) { //value between -180 and 180
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        RenderScript script = RenderScript.create(mainContext);
+        Type.Builder typeBuilder = new Type.Builder(script, Element.U32(script));
+        typeBuilder.setX(width);
+        typeBuilder.setY(height);
+        Allocation dataIn = Allocation.createTyped(script, typeBuilder.create());
+        Allocation dataOut = Allocation.createTyped(script, typeBuilder.create());
+
+        ScriptC_Colorization color = new ScriptC_Colorization(script);
+        color.set_hueValue((float)value);
+
+        dataIn.copy2DRangeFrom(0, 0, width, height, pixels);
+
+        color.forEach_Colorization(dataIn, dataOut);
+
+        dataOut.copy2DRangeTo(0, 0, width, height, pixels);
+
+
+        img.setPixels(pixels);
+    }
+
+
+    /**
      * Method toGray
      * Converts the image given in parameter in gray scale
      * @param img the image to convert to gray scale
@@ -221,7 +255,7 @@ public class Filters {
         Allocation dataOut = Allocation.createTyped(script, typeBuilder.create());
 
         ScriptC_Saturation sat = new ScriptC_Saturation(script);
-        sat.set_saturationValue((float)value);
+        sat.set_saturationValue((float) value);
 
         dataIn.copy2DRangeFrom(0, 0, width, height, pixels);
 

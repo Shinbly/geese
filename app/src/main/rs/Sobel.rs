@@ -15,15 +15,11 @@ unsigned int RS_KERNEL sobel(unsigned int in, uint32_t x, uint32_t y) {
     double coeff;
     int side = fSize/2;
     float R = 0;
-    float G = 0;
-    float B = 0;
     float R2 = 0;
-    float G2 = 0;
-    float B2 = 0;
 
     for (int i = -side; i <= side; i++) {
         for (int j = -side; j <= side; j++) {
-            if (x >= side && (x + side)<=imgWidth && y >= side && (y + side) <= imgHeight){
+            if (x >= side && (x + side)<imgWidth && y >= side && (y + side) < imgHeight){
 
                 coeff = mask_v[((j + side) * fSize) + i + side];
                 out = rsGetElementAt_uint(picture, x + i, y + j);

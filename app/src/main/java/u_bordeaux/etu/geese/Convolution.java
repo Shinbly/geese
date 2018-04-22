@@ -77,7 +77,7 @@ public class Convolution {
         filter.copy1DRangeFrom(0,mask.length,mask);
         convo.set_picture(dataIn);
         convo.bind_filter(filter);
-        convo.set_fSize((int)(Math.sqrt(mask.length)));
+        convo.set_fside((int)(Math.sqrt(mask.length)/2));
         convo.set_imgWidth(img.getWidth());
         convo.set_imgHeight(img.getHeight());
 
@@ -114,21 +114,33 @@ public class Convolution {
      * @param context
      */
     public static void gaussien(Image img, int size_mask,Context context) {
-        int size= 3;
-        double mask[]= new double[size*size];
-        double sigma= 1+size_mask;
-        int rayon = 1; // test
-        double pos = 1;
-        for (int y = -rayon; y<= rayon;y++){
-            for(int x= -rayon ; x <= rayon ;x++){
-                pos= (Math.exp(-((x*x+y*y)/(2*(sigma*sigma)))));
-                mask[(x+rayon)+(y+rayon)*size]= pos ;
+        if (size_mask%2 != 0 && size_mask!= 1) {
+            int size = size_mask;
+            double mask[] = new double[size * size];
+            double sigma = 0.3;
+            int rayon = size/2; // test
+            double pos = 1;
+            double norm = (Math.exp(-((rayon * rayon * 2) / (2 * (sigma * sigma)))));
+            for (float y = -rayon; y <= rayon; y++) {
+                for (float x = -rayon; x <= rayon; x++) {
+                    pos =(int) ((Math.exp(-((x * x + y * y) / (2 * (sigma * sigma))))) / norm);
+                    mask[(int)((x + rayon) + (y + rayon) * size)] = pos;
+                }
             }
+            String maskString = "";
+            for (int y = -rayon; y <= rayon; y++) {
+                for (int x = -rayon; x <= rayon; x++) {
+                    maskString = maskString+(mask[(x + rayon) + (y + rayon) * size]+" ");
+                }
+                maskString  = maskString +"\n";
+            }
+
+            Log.i("mask ", "mask = "+size+"\n"+maskString);
+            int[] pixels = new int[img.getNbPixels()];
+            img.getPixels(pixels);
+            convolutionRS(img, pixels, mask, context);
+            img.setPixels(pixels);
         }
-        int[] pixels = new int[img.getNbPixels()];
-        img.getPixels(pixels);
-        convolutionRS(img,pixels,mask,context);
-        img.setPixels(pixels);
     }
 
 
