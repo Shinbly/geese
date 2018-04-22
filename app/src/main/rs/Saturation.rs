@@ -1,7 +1,7 @@
 #pragma version(1)
 #pragma rs java_package_name(u_bordeaux.etu.geese)
 
-float saturationValue = 0.0f;
+float saturationValue;
 
 
 unsigned int RS_KERNEL Saturation(unsigned int in, uint32_t x, uint32_t y) {
@@ -56,9 +56,8 @@ hue=  hue * 60.f;
   val = Cmax;
 
   //process
-  sat = (sat*100)+saturationValue;
-  sat = fmax(sat,0);
-  sat = fmin(sat, 99);
+  sat = (sat*100)*(1+saturationValue/100);
+  sat = fmin(fmax(sat,0), 99);
   sat = sat/100;
 
 
@@ -102,6 +101,12 @@ hue=  hue * 60.f;
   R=(int)((float)(fR+m)*255.0f);
   G=(int)((float)(fG+m)*255.0f);
   B=(int)((float)(fB+m)*255.0f);
+
+
+  R = fmax(0.f,fmin(255.f,R));
+  G = fmax(0.f,fmin(255.f,G));
+  B = fmax(0.f,fmin(255.f,B));
+
 
   out = (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
   return out;

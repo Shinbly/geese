@@ -128,7 +128,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
                     break;
 
                 case R.id.saturation :
-                    seekBarControl.setMax(pourcentMax*2);
+                    seekBarControl.setMax(pourcentMax*3);
                     seekBarControl.setProgress(pourcentMax);
                     Tag = "saturation";
                     break;
@@ -140,7 +140,7 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
                     break;
 
                 case R.id.blurring :
-                    seekBarControl.setMax(9);
+                    seekBarControl.setMax(4);
                     seekBarControl.setProgress(0);
                     Tag = "blur";
                     break;
@@ -200,6 +200,10 @@ public class FragmentEdit extends Fragment implements ImageButton.OnClickListene
 
                 case "contrast":
                     this.progress = progress - colorMax;
+                    break;
+
+                case "blur":
+                    this.progress = progress*2+1;
                     break;
 
                 case "hue":
