@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
@@ -53,6 +54,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     Image preview;
 
     private Uri pathImg;
+    private String pathDirectorySave = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DCIM + "/geese";
 
     private int cptImage =0;
 
@@ -75,15 +77,15 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     public TabLayout getTabLayout(){return tabLayout;}
 
     private String save(Bitmap bmp, String img_name){
-        String root = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DCIM + "/geese";
+        String root = pathDirectorySave;
         File dir = new File(root);
         dir.mkdirs();
         String imgName = img_name+".jpg";
         File file = new File(dir,imgName);
         //Les lignes suivantes permettent que la photo soit tout de suite
         //affichée dans la galerie
-        Uri uri = Uri.fromFile(file);
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,uri);
+        pathImg = Uri.fromFile(file);
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,pathImg);
         sendBroadcast(intent);
 
         FileOutputStream out = null;
@@ -103,7 +105,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
             }
         }
 
-        return file.getAbsolutePath();
+        return imgName;
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -128,6 +130,9 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editing);
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -227,10 +232,13 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     }
 
     private void share(Uri uri){
+        save(bmp,"truc");
+
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setType("image/jpeg");
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
     }
@@ -244,7 +252,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                 return true;
 
             case R.id.action_share:
-                share(this.pathImg);
+                share(pathImg);
                 return true;
 
             case R.id.restore_image:
