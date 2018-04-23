@@ -9,7 +9,6 @@
     tools:context="u_bordeaux.etu.geese.MainActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="200dp"
         android:layout_height="408dp"
         android:layout_marginBottom="8dp"

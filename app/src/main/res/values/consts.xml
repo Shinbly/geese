@@ -3,5 +3,4 @@
 <resources>
     <dimen name="margin_right_button">20dp</dimen>
     <dimen name="elevation_filter">10dp</dimen>
-    <dimen name="margin_right_colo_button">10dp</dimen>
 </resources>

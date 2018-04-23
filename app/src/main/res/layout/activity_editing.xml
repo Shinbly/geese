@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     tools:context="u_bordeaux.etu.geese.EditingActivity"
     android:background="@color/colorWhite"
-    android:orientation="vertical"
-    android:id="@+id/layout_activity_edit">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -25,7 +24,6 @@
         android:layout_height="450dp"
         android:gravity="center"
         android:background="@color/colorWhite"
-        android:id="@+id/appbarid"
         app:elevation="0dp">
 
 
