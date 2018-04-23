@@ -459,7 +459,6 @@ public class Viewer extends AppCompatImageView {
      * Gesture Listener detects a single click or long click and passes that on
      * to the view's listener.
      *
-     * @author Ortiz
      */
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -495,7 +494,6 @@ public class Viewer extends AppCompatImageView {
      * Responsible for all touch events. Handles the heavy lifting of drag and also sends
      * touch events to Scale Detector and Gesture Detector.
      *
-     * @author Ortiz
      */
     private class PrivateOnTouchListener implements OnTouchListener {
 
@@ -562,7 +560,6 @@ public class Viewer extends AppCompatImageView {
     /**
      * ScaleListener detects user two finger scaling and scales image.
      *
-     * @author Ortiz
      */
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
@@ -628,7 +625,6 @@ public class Viewer extends AppCompatImageView {
      * DoubleTapZoom calls a series of runnables which apply
      * an animated zoom in/out graphic to the image.
      *
-     * @author Ortiz
      */
     private class DoubleTapZoom implements Runnable {
 
