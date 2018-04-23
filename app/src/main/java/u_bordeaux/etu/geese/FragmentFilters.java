@@ -58,6 +58,9 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
     @BindView(R.id.sketch)
     ImageButton sketch;
 
+    @BindView(R.id.cartoon)
+    ImageButton cartoon;
+
 
     /**
      * The tag to know which button had been pressed
@@ -91,6 +94,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         laplacien.setOnClickListener(this);
         sobel.setOnClickListener(this);
         sketch.setOnClickListener(this);
+        cartoon.setOnClickListener(this);
 
 
         //Retrieves the image displayed in the Viewer of the EditingActivity to create the
@@ -137,6 +141,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             Bitmap bmpSobel = img.getBmp().copy(img.getBmp().getConfig(),true);
             Bitmap bmpLaplacien = img.getBmp().copy(img.getBmp().getConfig(),true);
             Bitmap bmpSketch = img.getBmp().copy(img.getBmp().getConfig(),true);
+            Bitmap bmpCartoon = img.getBmp().copy(img.getBmp().getConfig(),true);
 
 
 
@@ -171,6 +176,10 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             img.setBmp(bmpSketch);
             Filters.sketch(img,applicationContext);
             sketch.setImageBitmap(img.getBmp());
+
+            img.setBmp(bmpCartoon);
+            Filters.cartoon(img,applicationContext);
+            cartoon.setImageBitmap(img.getBmp());
         }
 
 
@@ -286,6 +295,10 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
                 case  R.id.sketch :
                     Tag = "sketch";
+                    break;
+
+                case  R.id.cartoon :
+                    Tag = "cartoon";
                     break;
             }
 

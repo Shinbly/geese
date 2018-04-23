@@ -183,6 +183,27 @@
                 android:text="Sketch" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:text="Cartoon"/>
+
+            <ImageButton
+                android:id="@+id/cartoon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_marginRight="@dimen/margin_right_button"
+                android:elevation="@dimen/elevation_filter"
+                android:text="Cartoon" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </HorizontalScrollView>

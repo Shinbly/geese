@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                     try{
                         photoFile = createImageFile();
                     }catch (IOException e){
+                        savePerm();
                         e.printStackTrace();
                     }
 

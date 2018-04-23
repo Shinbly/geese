@@ -4,10 +4,12 @@ package u_bordeaux.etu.geese;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.design.widget.TabLayout;
@@ -35,6 +37,8 @@ import java.util.Date;
  */
 
 public class EditingActivity extends AppCompatActivity implements FragmentFilters.FragmentFiltersListener, FragmentEdit.FragmentEditListener {
+
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     private TabLayout tabLayout;
 
@@ -138,6 +142,24 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
 
 
 
+    /**
+     * Method savePerm
+     * Allows the application to write into the internal storage of the device
+     */
+    private void savePerm() {
+        if(Build.VERSION.SDK_INT >= 23){
+            int hasWriteGalleryPermission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (hasWriteGalleryPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+            }
+        }
+    }
+
+
+
+
+
 
     /**
      * Method save
@@ -145,6 +167,10 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
      * @param bmp the bitmap to save
      */
     private void save(Bitmap bmp){
+
+
+        savePerm();
+
         boolean saveDone = false;
 
         File file = null;
@@ -152,6 +178,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         try{
             file = createImageFile();
         }catch (IOException e){
+            savePerm();
             e.printStackTrace();
         }
 
@@ -171,6 +198,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                         saveDone = true;
                     }
                 } catch (IOException e) {
+                    savePerm();
                     e.printStackTrace();
                 }
             }
@@ -184,7 +212,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         if(saveDone){
             Toast.makeText(context,"Image saved",Toast.LENGTH_LONG).show();
         }else{
-            Toast.makeText(context,"An error occured",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"Cannot save, permission denied",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -222,7 +250,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
      * @param streamS the same stream used to decode the smaller bitmap
      * @return a smaller version of the bitmap
      */
-    public Bitmap decodeSampledBitmapFromStream(InputStream stream, InputStream streamS) {
+    private Bitmap decodeSampledBitmapFromStream(InputStream stream, InputStream streamS) {
         // First decode with inJustDecodeBounds=true to check dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -260,7 +288,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     * @param reqHeight the desired height of the resized bitmap
     * @return the reduction factor
     */
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -345,6 +373,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
             bmp = decodeSampledBitmapFromStream(stream, streamS);
 
             imageView.setImageBitmap(bmp);
+            imageView.invalidate();
             img = new Image(bmp);
 
 
@@ -355,13 +384,6 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         //Bundle which will be send to the FragmentFilters for the thumbnails
         Bundle bundle = new Bundle();
         bundle.putParcelable("bmp",pathImg);
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -420,6 +442,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     public void onPreviewStart() {
         preview = new Image(img.getPreview(imageView.getWidth(), imageView.getHeight()));
         imageView.setImageBitmap(preview.getBmp());
+        imageView.invalidate();
     }
 
 
@@ -446,6 +469,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
     public void filterSelection(String TAG, int progress, Image img){
         if (working == false){
             working = true;
+            progressBar.setVisibility(View.VISIBLE);
 
             if (img == preview){
                 preview.restore();
@@ -552,6 +576,10 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
                     Filters.sketch(img, context);
                     break;
 
+                case "cartoon" :
+                    Filters.cartoon(img, context);
+                    break;
+
                 case "cancel" :
                     break;
             }
@@ -566,6 +594,7 @@ public class EditingActivity extends AppCompatActivity implements FragmentFilter
         protected void onPostExecute(Object o) {
             imageView.setImageBitmap(img.getBmp());
             imageView.postInvalidate();
+            progressBar.setVisibility(View.INVISIBLE);
             working = false;
         }
     }

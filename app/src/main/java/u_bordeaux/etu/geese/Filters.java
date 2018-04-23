@@ -284,4 +284,33 @@ public class Filters {
         negative(img);
         Convolution.gaussien(img, 7, context);
     }
+
+
+    /**
+     * Method cartoon
+     * Apply a cartoon effect to the image.
+     * @param img the image on which the filter will be apply
+     * @param context the context of the application
+     */
+    public static void cartoon(Image img, Context context) {
+        Image sobel = new Image(img.getBmp().copy(img.getBmp().getConfig(),true));
+        Convolution.sobelRS(sobel,context);
+        int[] sobels = new int[sobel.getNbPixels()];
+        sobel.getPixels(sobels);
+        Convolution.moyenneur(img,9,context);
+        int[] pixels = new int[img.getNbPixels()];
+        img.getPixels(pixels);
+        for (int i = 0; i < img.getNbPixels(); i++) {
+            int newRed = Color.red(pixels[i]) - Color.red(sobels[i]) ;
+            int newGreen =Color.green(pixels[i]) - Color.red(sobels[i]) ;
+            int newBlue = Color.blue(pixels[i]) - Color.red(sobels[i]) ;
+
+
+            pixels[i] = Color.rgb(truncate(newRed), truncate(newGreen), truncate(newBlue));
+        }
+        img.setPixels(pixels);
+        Histogram.equalization(img);
+        Histogram.linearExtension(img);
+        Filters.saturationRs(img,100,context);
+    }
 }

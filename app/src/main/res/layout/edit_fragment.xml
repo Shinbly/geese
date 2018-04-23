@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/margin_right_button"
                 android:background="@color/colorWhite"
-                android:src="@drawable/ic_colorization_click_none"/>
+                android:src="@drawable/ic_colorization_none"/>
 
             <ImageButton
                 android:id="@+id/colo_jaune"
