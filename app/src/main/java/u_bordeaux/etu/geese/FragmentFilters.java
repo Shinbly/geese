@@ -57,11 +57,15 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
     @BindView(R.id.sketch)
     ImageButton sketch;
+
+
     /**
      * The tag to know which button had been pressed
      * The tag is pass to the activity with the interface FragmentFiltersListener
      */
     private String Tag = "";
+
+
 
 
     /**
@@ -89,6 +93,8 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         sketch.setOnClickListener(this);
 
 
+        //Retrieves the image displayed in the Viewer of the EditingActivity to create the
+        // thumbnails of the filters
         EditingActivity activity = (EditingActivity) getActivity();
         Uri pathImg = activity.getPathImg();
 
@@ -101,10 +107,12 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             final InputStream stream = applicationContext.getContentResolver().openInputStream(pathImg);
             final InputStream streamS = applicationContext.getContentResolver().openInputStream(pathImg);
 
+            //Returns a bitmap smaller than the image retrieve from the EditingActivity
             bmp = decodeSampledBitmapFromStream(stream,streamS);
 
             Bitmap croppedBitmap;
 
+            //Crops the bitmap width or the bitmap height so the thumbnails are square
             int diff = bmp.getWidth() - bmp.getHeight();
             if(diff < 0){
                 croppedBitmap = Bitmap.createBitmap(bmp,0,Math.abs(diff)/2, bmp.getWidth(),bmp.getHeight()-Math.abs(diff));
@@ -115,12 +123,13 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
             img = new Image(Bitmap.createScaledBitmap(croppedBitmap,200,200,false));
 
         }catch (FileNotFoundException e){
-
+            e.printStackTrace();
         }
 
         //The filters thumbnails
         if(img != null){
 
+            //Each filter has a bitmap but they are small and don't take too much space on memory
             Bitmap bmpSepia = img.getBmp().copy(img.getBmp().getConfig(),true);
             Bitmap bmpNegatif = img.getBmp().copy(img.getBmp().getConfig(),true);
             Bitmap bmpEqualization = img.getBmp().copy(img.getBmp().getConfig(),true);
@@ -131,6 +140,7 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
 
 
+            //Set the thumbnail of each filter
             Filters.toGray(img);
             gray.setImageBitmap(img.getBmp());
 
@@ -167,25 +177,53 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
         return view;
     }
 
+
+
+
+
+
+    /**
+     * Method decodeSampleBitmapFromStream
+     * Return a bitmap smaller than the one passed with the stream. The original bitmap is not
+     * charged into the memory, so it doesn't overload it
+     * @param stream the stream which "contains" the bitmap
+     * @param streamS the same stream used to decode the smaller bitmap
+     * @return a smaller version of the bitmap
+     */
     public Bitmap decodeSampledBitmapFromStream(InputStream stream, InputStream streamS) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
+        //Not charged into memory
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(stream,null,options);
 
+        //Compute the reduction factor with the width and the height given as parameters
         options.inSampleSize = calculateInSampleSize(options,200,200);
 
         // Decode bitmap with inSampleSize set
-
         options.inJustDecodeBounds = false;
         options.inScaled = true;
         options.inMutable = true;
 
-        Bitmap bmp = BitmapFactory.decodeStream(streamS,null,options);
-        return bmp;
+        return BitmapFactory.decodeStream(streamS,null,options);
     }
 
+
+
+
+
+
+    /**
+     * Method calculateInSampleSize
+     * Computes the reduction factor to apply to the bitmap to reduce it based on the width and the
+     * height given in parameters
+     * @param options the option of the Bitmap factory, to retrieve the width and height of the
+     *                original bitmp
+     * @param reqWidth the desired width of the resized bitmap
+     * @param reqHeight the desired height of the resized bitmap
+     * @return the reduction factor
+     */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
@@ -207,6 +245,10 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
 
         return inSampleSize;
     }
+
+
+
+
 
 
     @Override
@@ -252,8 +294,13 @@ public class FragmentFilters extends Fragment implements Button.OnClickListener 
     }
 
 
+
+
+
+
     /**
      * Interface FragmentFiltersListener
+     * Acts as a bond between the fragment and the EditingActivity
      */
     public interface FragmentFiltersListener {
 

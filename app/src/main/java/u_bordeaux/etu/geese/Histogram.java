@@ -11,7 +11,7 @@ public class Histogram {
 
     /**
      * Method histogram
-     * Return the RVB histogram of the image given in parameter and put all the values
+     * Returns the RVB histogram of the image given in parameter and put all the values
      * in the array given in parameter
      * @param img the image from which we wants to extract the histogram
      * @param histo the array which will be filled with the values of the histogram
@@ -31,7 +31,7 @@ public class Histogram {
 
     /**
      * Method histogramRed
-     * Return the Red histogram of the image given in parameter and put all the values
+     * Returns the Red histogram of the image given in parameter and put all the values
      * in the array given in parameter
      * @param img the image from which we wants to extract the histogram
      * @param histo the array which will be filled with the values of the histogram
@@ -48,7 +48,7 @@ public class Histogram {
 
     /**
      * Method histogramGreen
-     * Return the Green histogram of the image given in parameter and put all the values
+     * Returns the Green histogram of the image given in parameter and put all the values
      * in the array given in parameter
      * @param img the image from which we wants to extract the histogram
      * @param histo the array which will be filled with the values of the histogram
@@ -65,7 +65,7 @@ public class Histogram {
 
     /**
      * Method histogramBlue
-     * Return the Blue histogram of the image given in parameter and put all the values
+     * Returns the Blue histogram of the image given in parameter and put all the values
      * in the array given in parameter
      * @param img the image from which we wants to extract the histogram
      * @param histo the array which will be filled with the values of the histogram
@@ -82,7 +82,7 @@ public class Histogram {
 
     /**
      * Method getMin
-     * Return the minimum value of the histogram given in parameter
+     * Returns the minimum value of the histogram given in parameter
      * @param histo the histogram from which we wants to extract the minimum value
      * @return the minimum value of the array
      */
@@ -99,7 +99,7 @@ public class Histogram {
 
     /**
      * Method getMax
-     * Return the maximum value of the histogram given in parameter
+     * Returns the maximum value of the histogram given in parameter
      * @param histo the histogram from which we wants to extract the maximum value
      * @return the maximum value of the array
      */
@@ -133,7 +133,7 @@ public class Histogram {
 
     /**
      * Method linearExtensionByParts
-     * Create the lookup table and fills it, calls the method applyLut on the image given
+     * Creates the lookup table and fills it, calls the method applyLut on the image given
      * in parameter
      * @param img the image on which the linearExtensions will be apply
      * @param min the minimum of the histogram of the image
@@ -153,7 +153,7 @@ public class Histogram {
 
     /**
      * Method applyLut
-     * Apply the values of a Lookup table, given in parameter, to the pixels of an image also
+     * Applies the values of a Lookup table, given in parameter, to the pixels of an image also
      * given in parameter
      * @param img the image which will be edited
      * @param Lut the lookup table to modify the pixels of the image

@@ -1,11 +1,8 @@
 package u_bordeaux.etu.geese;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.widget.ImageView;
 
-import android.net.Uri;
 
 /**
  * Class Image, represents the editing image on which all the modifications will be apply
@@ -24,8 +21,6 @@ public class Image {
      */
     private int[] backup;
 
-    //private static int nbPixelsAllow = 1920*1080;
-
 
 
 
@@ -38,14 +33,17 @@ public class Image {
     public Image(Bitmap bmp) {
         this.bmp = bmp;
 
-        /*int nbPixelsOrig = bmp.getHeight()*bmp.getWidth();
+        this.backup = new int[bmp.getHeight()*bmp.getWidth()];
+        bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
+    }
 
-        float ratioSize = nbPixelsOrig/nbPixelsAllow;
 
-        if(nbPixelsAllow < nbPixelsOrig){
-            bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()/Math.sqrt(ratioSize)),(int)(bmp.getHeight()/Math.sqrt(ratioSize)),true);
-        }*/
-
+    /**
+     * Setter for the bitmap
+     * @return the new value for the bitmap and the backup array which are the ones given as parameter
+     */
+    public void setBmp(Bitmap bmp){
+        this.bmp = bmp;
         this.backup = new int[bmp.getHeight()*bmp.getWidth()];
         bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
     }
@@ -55,21 +53,10 @@ public class Image {
      * Getter for the bitmap
      * @return the field bmp, the bitmap of the image
      */
-    public void setBmp(Bitmap bmp){
-        this.bmp = bmp;
-        this.backup = new int[bmp.getHeight()*bmp.getWidth()];
-        bmp.getPixels(backup, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
-    }
-
     public Bitmap getBmp() {
         return bmp;
     }
 
-
-
-    public Bitmap getThumbnail(int width, int height) {
-        return Bitmap.createScaledBitmap(bmp, width, height,false);
-    }
 
     /**
      * Getter for the width of the image
@@ -109,7 +96,7 @@ public class Image {
 
     /**
      * Setter for the pixels of the image
-     * @param pixels
+     * @param pixels the new set of pixels of the image
      */
     public void setPixels(int[] pixels) {
         bmp.setPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
@@ -188,15 +175,4 @@ public class Image {
 
         this.setPixels(pixels);
     }
-
-
-    /**
-     * Method setImageView
-     * Set the bitmap of the ImageView given in parameter by
-     * @param Iv the ImageView which has to change its bitmap
-     */
-    public void setImageView(ImageView Iv){
-        Iv.setImageBitmap(bmp);
-    }
-
 }

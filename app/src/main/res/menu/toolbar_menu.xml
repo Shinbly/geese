@@ -18,11 +18,6 @@
         app:showAsAction="ifRoom"
         android:actionProviderClass="android.widget.ShareActionProvider"/>
 
-    <item
-        android:id="@+id/save_image"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="Save image"/>
 
     <item
         android:id="@+id/restore_image"

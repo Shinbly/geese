@@ -11,17 +11,28 @@ import java.lang.reflect.Field;
 
 
 /**
- * Class NonSwipeableViewPager
+ * Class NonSwipeableViewPager, disallow to swipe between fragments
  */
 
 public class NonSwipeableViewPager extends ViewPager {
 
+    /**
+     * Constructor
+     * Summons the constructor of the superclass and set the scroller
+     * @param context
+     */
     public NonSwipeableViewPager(Context context) {
         super(context);
         setMyScroller();
     }
 
 
+    /**
+     * Constructor
+     * Summons the constructor of the superclass and set the scroller
+     * @param context
+     * @param attrs
+     */
     public NonSwipeableViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         setMyScroller();
@@ -42,6 +53,10 @@ public class NonSwipeableViewPager extends ViewPager {
     }
 
 
+    /**
+     * Method setMyScroller
+     * set the scroller of the ViewPager
+     */
     private void setMyScroller(){
         try{
             Class<?> viewpager = ViewPager.class;
@@ -53,6 +68,10 @@ public class NonSwipeableViewPager extends ViewPager {
         }
     }
 
+
+    /**
+     * Inner class Myscroller
+     */
 
     public class MyScroller extends Scroller {
 

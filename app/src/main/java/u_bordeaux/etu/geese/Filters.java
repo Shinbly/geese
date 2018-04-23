@@ -30,11 +30,11 @@ public class Filters {
 
     /**
      * Method brightness
-     * Set the global brightness of the image given in parameter
+     * Sets the global brightness of the image given in parameter
      * @param img the image to set the brightness
      * @param value the "amount" of brightness to add to the image
      */
-    public static void brightness(Image img, int value) {
+    public static void brightness(Image img, int value) { //value between -100 and 100
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
 
@@ -56,7 +56,7 @@ public class Filters {
 
     /**
      * Method hue
-     * Set the gobal hue of the image given in parameter
+     * Sets the gobal hue of the image given in parameter
      * @param img the image to set the hue
      * @param value the value to add to the current hue
      */
@@ -82,6 +82,7 @@ public class Filters {
     public static void hueRs(Image img, int value, Context mainContext) { //value between -180 and 180
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
+
         int width = img.getWidth();
         int height = img.getHeight();
 
@@ -108,14 +109,15 @@ public class Filters {
 
     /**
      * Method colorization
-     * Set the hue of each pixels of the image given in parameter
+     * Sets the hue of each pixels of the image given in parameter
      * @param img the image to set the hue
      * @param value the value to set to the current hue
-     * @param mainContext
+     * @param mainContext the application's context
      */
-    public static void Colorization (Image img, int value, Context mainContext) { //value between -180 and 180
+    public static void colorization (Image img, int value, Context mainContext) { //value between 0 and 360
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
+
         int width = img.getWidth();
         int height = img.getHeight();
 
@@ -135,7 +137,6 @@ public class Filters {
 
         dataOut.copy2DRangeTo(0, 0, width, height, pixels);
 
-
         img.setPixels(pixels);
     }
 
@@ -143,7 +144,7 @@ public class Filters {
     /**
      * Method toGray
      * Converts the image given in parameter in gray scale
-     * @param img the image to convert to gray scale
+     * @param img the image to convert in gray scale
      */
     public static void toGray(Image img) {
         int[] pixels = new int[img.getNbPixels()];
@@ -167,15 +168,17 @@ public class Filters {
     public static void negative(Image img) {
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
+
         int newRed;
         int newBlue;
         int newGreen;
         int maxColor = 255;
 
         for (int i = 0; i < img.getNbPixels(); i++) {
-            newRed = maxColor-Color.red(pixels[i]);
-            newGreen = maxColor-Color.green(pixels[i]);
-            newBlue = maxColor-Color.blue(pixels[i]);
+            newRed = maxColor - Color.red(pixels[i]);
+            newGreen = maxColor - Color.green(pixels[i]);
+            newBlue = maxColor - Color.blue(pixels[i]);
+
             pixels[i] = Color.rgb(newRed, newGreen, newBlue);
         }
 
@@ -200,6 +203,7 @@ public class Filters {
             newRed = (int)(Color.red(pixels[i])* .393) + (int)(Color.green(pixels[i])* .769) + (int)(Color.blue(pixels[i])* .189);
             newGreen = (int)(Color.red(pixels[i])* .349) + (int)(Color.green(pixels[i])* .686) + (int)(Color.blue(pixels[i])* .168);
             newBlue = (int)(Color.red(pixels[i])* .272) + (int)(Color.green(pixels[i])* .534) + (int)(Color.blue(pixels[i])* .131);
+
             pixels[i] = Color.rgb(truncate(newRed), truncate(newGreen), truncate(newBlue));
         }
 
@@ -209,12 +213,12 @@ public class Filters {
 
     /**
      * Method contrast
-     * Set the global contrast of the image given in parameter
+     * Sets the global contrast of the image given in parameter
      * @param img the image to set the contrast
      * @param value the "amount" of contrast to add to the image
      */
-    public static void contrast(Image img, int value) {//value between -255 and 255
-        float coeff= (float)(259*(value+255)) / (float)((255 * (259-value)));
+    public static void contrast(Image img, int value) { //value between -255 and 255
+        float coeff= (float)(259*(value+255)) / (float)((255*(259-value)));
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
 
@@ -223,9 +227,10 @@ public class Filters {
         int newBlue;
 
         for (int i = 0; i < img.getNbPixels(); i++) {
-            newRed = (int)(coeff*(Color.red(pixels[i])-128) +128);
-            newGreen = (int)(coeff*(Color.green(pixels[i])-128) +128);
-            newBlue = (int)(coeff*(Color.blue(pixels[i])-128) +128);
+            newRed = (int)(coeff*(Color.red(pixels[i]) - 128) + 128);
+            newGreen = (int)(coeff*(Color.green(pixels[i]) - 128) + 128);
+            newBlue = (int)(coeff*(Color.blue(pixels[i]) - 128) + 128);
+
             pixels[i] = Color.rgb(truncate(newRed), truncate(newGreen), truncate(newBlue));
         }
 
@@ -235,15 +240,16 @@ public class Filters {
 
     /**
      * MethodsaturationRS
-     * Set the saturation of the image by adding the parameter value to the saturation of each
+     * Sets the saturation of the image by adding the value given as parameter to the saturation of each
      * pixel of the image. Optimized with renderscript
      * @param img the image to set the saturation
-     * @param value the value to add to the current saturation of the image given in parameter
+     * @param value the value to multiply to the current saturation of the image given in parameter
      * @param context the context of the activity in which the method is called
      */
-    public static void saturationRs(Image img, int value, Context context) {
+    public static void saturationRs(Image img, int value, Context context) { //value between -100 and 100
         int[] pixels = new int[img.getNbPixels()];
         img.getPixels(pixels);
+
         int width = img.getWidth();
         int height = img.getHeight();
 
@@ -261,8 +267,7 @@ public class Filters {
 
         sat.forEach_Saturation(dataIn, dataOut);
 
-        dataOut.copy2DRangeTo(0, 0, width,height,pixels);
-
+        dataOut.copy2DRangeTo(0, 0, width, height, pixels);
 
         img.setPixels(pixels);
     }
@@ -275,8 +280,8 @@ public class Filters {
      * @param context the context of the application
      */
     public static void sketch(Image img, Context context) {
-        Convolution.sobelRS(img,context);
+        Convolution.sobelRS(img, context);
         negative(img);
-        //Convolution.gaussien(img,7,context);
+        Convolution.gaussien(img, 7, context);
     }
 }
